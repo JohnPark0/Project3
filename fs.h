@@ -1,4 +1,16 @@
 /* File system header (FS.H) */
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <string.h>
+#include <sched.h>
+#include <signal.h>
+#include <unistd.h>
+#include <sys/ipc.h>
+#include <sys/msg.h>
+#include <sys/time.h>
+#include <sys/types.h>
+#include <time.h>
 
 /**
 	Some Define values
@@ -39,7 +51,7 @@
 /**
   Super block structure
 */
-struct super_block {
+typedef struct super_block {
 	unsigned int partition_type;
 	unsigned int block_size;
 	unsigned int inode_size;
@@ -54,35 +66,35 @@ struct super_block {
 	unsigned int first_data_block;
 	char volume_name[24];
 	unsigned char padding[960]; //1024-64
-};
+} super_block;
 
 /**
   32 byte I-node structure
 */
-struct inode {
+typedef struct inode {
 	unsigned int mode; 		// reg. file, directory, dev., permissions
 	unsigned int locked; 	// opened for write
 	unsigned int date;
 	unsigned int size;
 	int indirect_block; 	// N.B. -1 for NULL
 	unsigned short blocks[0x6];
-};
+} inode;
 
-struct blocks {
+typedef struct blocks {
 	unsigned char d[1024];
-};
+} blocks;
 
 /* physical partition structure */
-struct partition {
+typedef struct partition {
 	struct super_block s;
 	struct inode inode_table[224];
 	struct blocks data_blocks[4088]; //4096-8
-};
+} partition;
 
 /**
   Directory entry structure
 */
-struct dentry {
+typedef struct dentry {
 	unsigned int inode;
 	unsigned int dir_length;
 	unsigned int name_len;
@@ -91,6 +103,20 @@ struct dentry {
 		unsigned char name[256];
 		unsigned char n_pad[16][16];
 	};
-};
+} dentry;
+
+void mount(void);
+void print_RootDir(void);
 
 
+FILE* pFileSystem;
+FILE* File_dump;
+partition part;
+dentry dirEntry;
+
+
+void fileOpen(char* name, char* mode) {
+
+
+
+}
