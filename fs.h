@@ -1,4 +1,3 @@
-/* File system header (FS.H) */
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -12,9 +11,12 @@
 #include <sys/types.h>
 #include <time.h>
 
-/**
-	Some Define values
-*/
+//RR Define
+#define MAX_PROCESS 10
+#define TIME_TICK 10000// 0.01 second(10ms).
+#define TIME_QUANTUM 5// 0.05 seconds(50ms).
+
+//File System Define
 #define SIMPLE_PARTITION	0x1111
 
 #define INVALID_INODE			0
@@ -37,7 +39,7 @@
 #define DENTRY_TYPE_DIR_FILE	0x2
 
 #define BLOCK_SIZE				0x400
-/**
+/*
   Partition structure
 	ASSUME: data block size: 1K
 
@@ -48,35 +50,32 @@
 	data blocks: 1KB blocks array (~4K)
 */
 
-/**
-  Super block structure
-*/
-typedef struct super_block {
-	unsigned int partition_type;
-	unsigned int block_size;
-	unsigned int inode_size;
-	unsigned int first_inode;
+//Super block structure
+typedef struct superBlock {
+	unsigned int partitionType;
+	unsigned int blockSize;
+	unsigned int inodeSize;
+	unsigned int firstInode;
 
-	unsigned int num_inodes;
-	unsigned int num_inode_blocks;
-	unsigned int num_free_inodes;
+	unsigned int numInodes;
+	unsigned int numInodeBlocks;
+	unsigned int numFreeInodes;
 
-	unsigned int num_blocks;
-	unsigned int num_free_blocks;
-	unsigned int first_data_block;
-	char volume_name[24];
+	unsigned int numBlocks;
+	unsigned int numFreeBlocks;
+	unsigned int firstDataBlock;
+	char volumeName[24];
 	unsigned char padding[960]; //1024-64
-} super_block;
+} superBlock;
 
-/**
-  32 byte I-node structure
-*/
+
+//32 byte I-node structure
 typedef struct inode {
 	unsigned int mode; 		// reg. file, directory, dev., permissions
 	unsigned int locked; 	// opened for write
 	unsigned int date;
 	unsigned int size;
-	int indirect_block; 	// N.B. -1 for NULL
+	int indirectBlock; 	// N.B. -1 for NULL
 	unsigned short blocks[0x6];
 } inode;
 
@@ -84,39 +83,83 @@ typedef struct blocks {
 	unsigned char d[1024];
 } blocks;
 
-/* physical partition structure */
+//physical partition structure
 typedef struct partition {
-	struct super_block s;
-	struct inode inode_table[224];
-	struct blocks data_blocks[4088]; //4096-8
+	struct superBlock super;
+	struct inode inodeTable[224];
+	struct blocks dataBlocks[4088]; //4096-8
 } partition;
 
-/**
-  Directory entry structure
-*/
+//Directory entry structure
 typedef struct dentry {
 	unsigned int inode;
-	unsigned int dir_length;
-	unsigned int name_len;
-	unsigned int file_type;
+	unsigned int dirLength;
+	unsigned int nameLen;
+	unsigned int fileType;
 	union { // name
 		unsigned char name[256];
-		unsigned char n_pad[16][16];
+		unsigned char nPad[16][16];
 	};
 } dentry;
 
-void mount(void);
-void print_RootDir(void);
+/*
+	Round Robin Scheduling Struct
+*/
+typedef struct Node {
+	struct Node* next;
+	int procNum;
+	int pid;
+	int cpuTime;
+	int ioTime;
+} Node;
 
+typedef struct nodeList {
+	Node* head;
+	Node* tail;
+	int listSize;
+} nodeList;
+
+typedef struct dataIocpu {
+	int pid;
+	int cpuTime;
+	int ioTime;
+} dataIocpu;
+
+// message buffer that contains child process'super data.
+struct msgBufIocpu {
+	long mType;
+	struct dataIocpu mData;
+};
+
+void mount(void);
+void printRootDir(void);
+void signalTimeTick(int signo);
+void signalRRcpuSchedOut(int signo);
+void signalIoSchedIn(int signo);
+void initNodeList(nodeList* list);
+void pushBackNode(nodeList* list, int procNum, int cpuTime, int ioTime);
+void popFrontNode(nodeList* list, Node* runNode);
+void deleteNode(nodeList* list);
+void cMsgSndIocpu(int key, int cpuBurstTime, int ioBurstTime);
+void pMsgRcvIocpu(int procNum, Node* nodePtr);
+bool isEmptyList(nodeList* list);
+
+extern int CPID[MAX_PROCESS];// child process pid.
+extern int KEY[MAX_PROCESS];// key value for message queue.
+extern int CONST_TICK_COUNT;
+extern int TICK_COUNT;
+extern int RUN_TIME;
+
+extern nodeList* waitQueue;
+extern nodeList* readyQueue;
+extern Node* cpuRunNode;
+extern Node* ioRunNode;
 
 FILE* pFileSystem;
-FILE* File_dump;
+FILE* FileDump;
+FILE* rpburst;
 partition part;
 dentry dirEntry;
 
 
-void fileOpen(char* name, char* mode) {
 
-
-
-}
