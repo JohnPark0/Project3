@@ -42,7 +42,7 @@ void mount(void) {
 	fclose(File_dump);
 }
 
-void print_RootDir(void) {
+void printRootDir(void) {
 	int blockNum = part.inode_table[part.s.first_inode].size / BLOCK_SIZE;							//BLOCK_SIZE = 0x400
 	int blockLocation;
 
