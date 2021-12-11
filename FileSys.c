@@ -101,6 +101,17 @@ int fileOpen(char* name, int mode) {
 	return 2;
 }
 
+void fileWrite(char* writeBuffer, int dataSize) {
+	int blockNum = part.inodeTable[dirEntry.inode].size / BLOCK_SIZE;
+	int fileLocation;
+	char writeData[BLOCK_SIZE] = "writeData";
+
+	fileLocation = (BLOCK_SIZE * part.super.firstDataBlock) + (BLOCK_SIZE * part.inodeTable[dirEntry.inode].blocks[blockNum]);
+	fseek(pFileSystem, fileLocation, SEEK_SET);
+	fwrite(writeData, sizeof(char), BLOCK_SIZE, pFileSystem);
+}
+
+
 void fileClose(void) {
 	memset(&dirEntry, 0, sizeof(dentry));
 }

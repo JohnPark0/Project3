@@ -105,19 +105,19 @@ typedef struct dentry {
 /*
 	Round Robin Scheduling Struct
 */
-typedef struct Node {
-	struct Node* next;
+typedef struct processControlBlock {
+	struct processControlBlock* next;
 	int procNum;
 	int pid;
 	int cpuTime;
 	int ioTime;
-} Node;
+} PCB;
 
-typedef struct nodeList {
-	Node* head;
-	Node* tail;
+typedef struct PCBList {
+	PCB* head;
+	PCB* tail;
 	int listSize;
-} nodeList;
+} PCBList;
 
 typedef struct dataIocpu {
 	int pid;
@@ -133,33 +133,33 @@ struct msgBufIocpu {
 
 void mount(void);
 void printRootDir(void);
+
 void signalTimeTick(int signo);
 void signalRRcpuSchedOut(int signo);
 void signalIoSchedIn(int signo);
-void initNodeList(nodeList* list);
-void pushBackNode(nodeList* list, int procNum, int cpuTime, int ioTime);
-void popFrontNode(nodeList* list, Node* runNode);
-void deleteNode(nodeList* list);
-void cMsgSndIocpu(int key, int cpuBurstTime, int ioBurstTime);
-void pMsgRcvIocpu(int procNum, Node* nodePtr);
-bool isEmptyList(nodeList* list);
+void initPCBList(PCBList* list);
+void pushPCB(PCBList* list, int procNum, int cpuTime, int ioTime);
+void popPCB(PCBList* list, PCB* runPCB);
+void deletePCB(PCBList* list);
+void cMsgSndIocpu(int procNum, int cpuBurstTime, int ioBurstTime);
+void pMsgRcvIocpu(int procNum, PCB* nodePtr);
+bool isEmptyList(PCBList* list);
 
-extern int CPID[MAX_PROCESS];// child process pid.
-extern int KEY[MAX_PROCESS];// key value for message queue.
-extern int CONST_TICK_COUNT;
-extern int TICK_COUNT;
-extern int RUN_TIME;
+int CPID[MAX_PROCESS];// child process pid.
+int KEY[MAX_PROCESS];// key value for message queue.
+int CONST_TICK_COUNT;
+int TICK_COUNT;
+int RUN_TIME;
 
-extern nodeList* waitQueue;
-extern nodeList* readyQueue;
-extern Node* cpuRunNode;
-extern Node* ioRunNode;
+PCBList* waitQueue;
+PCBList* readyQueue;
+PCB* cpuRunPCB;
+PCB* ioRunPCB;
 
 FILE* pFileSystem;
 FILE* FileDump;
 FILE* rpburst;
 partition part;
 dentry dirEntry;
-
 
 

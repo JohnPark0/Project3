@@ -8,31 +8,31 @@ void signalTimeTick(int signo) {								//SIGALRM
 	printf("%05d       PROC NUMBER   REMAINED CPU TIME\n", CONST_TICK_COUNT);
 
 	// io burst part.
-	Node* nodePtr = waitQueue->head;
+	PCB* PCBPtr = waitQueue->head;
 	int waitQueueSize = 0;
 
 	// get the size of wait queue.
-	while (nodePtr != NULL) {
-		nodePtr = nodePtr->next;
+	while (PCBPtr != NULL) {
+		PCBPtr = PCBPtr->next;
 		waitQueueSize++;
 	}
 
 	for (int i = 0; i < waitQueueSize; i++) {
-		popFrontNode(waitQueue, ioRunNode);
-		ioRunNode->ioTime--;			// decrease io time by 1.
+		popPCB(waitQueue, ioRunPCB);
+		ioRunPCB->ioTime--;			// decrease io time by 1.
 
 		// io task is over, then push node to ready queue.
-		if (ioRunNode->ioTime == 0) {
-			pushBackNode(readyQueue, ioRunNode->procNum, ioRunNode->cpuTime, ioRunNode->ioTime);
+		if (ioRunPCB->ioTime == 0) {
+			pushPCB(readyQueue, ioRunPCB->procNum, ioRunPCB->cpuTime, ioRunPCB->ioTime);
 		}
 		// io task is not over, then push node to wait queue again.
 		else {
-			pushBackNode(waitQueue, ioRunNode->procNum, ioRunNode->cpuTime, ioRunNode->ioTime);
+			pushPCB(waitQueue, ioRunPCB->procNum, ioRunPCB->cpuTime, ioRunPCB->ioTime);
 		}
 	}
 	// cpu burst part.
-	if (cpuRunNode->procNum != -1) {
-		kill(CPID[cpuRunNode->procNum], SIGCONT);
+	if (cpuRunPCB->procNum != -1) {
+		kill(CPID[cpuRunPCB->procNum], SIGCONT);
 	}
 
 	RUN_TIME--;// run time decreased by 1.
@@ -44,77 +44,77 @@ void signalRRcpuSchedOut(int signo) {							//SIGUSR1
 
 	// scheduler changes cpu preemptive process at every time quantum.
 	if (TICK_COUNT >= TIME_QUANTUM) {
-		pushBackNode(readyQueue, cpuRunNode->procNum, cpuRunNode->cpuTime, cpuRunNode->ioTime);
+		pushPCB(readyQueue, cpuRunPCB->procNum, cpuRunPCB->cpuTime, cpuRunPCB->ioTime);
 
 		// pop the next process from the ready queue.
-		popFrontNode(readyQueue, cpuRunNode);
+		popPCB(readyQueue, cpuRunPCB);
 		TICK_COUNT = 0;
 	}
 	return;
 }
 
 void signalIoSchedIn(int signo) {								//SIGUSR2
-	pMsgRcvIocpu(cpuRunNode->procNum, cpuRunNode);
+	pMsgRcvIocpu(cpuRunPCB->procNum, cpuRunPCB);
 
 	// process that has no io task go to the end of the ready queue.
-	if (cpuRunNode->ioTime == 0) {
-		pushBackNode(readyQueue, cpuRunNode->procNum, cpuRunNode->cpuTime, cpuRunNode->ioTime);
+	if (cpuRunPCB->ioTime == 0) {
+		pushPCB(readyQueue, cpuRunPCB->procNum, cpuRunPCB->cpuTime, cpuRunPCB->ioTime);
 	}
 	// process that has io task go to the end of the wait queue.
 	else {
-		pushBackNode(waitQueue, cpuRunNode->procNum, cpuRunNode->cpuTime, cpuRunNode->ioTime);
+		pushPCB(waitQueue, cpuRunPCB->procNum, cpuRunPCB->cpuTime, cpuRunPCB->ioTime);
 	}
 
 	// pop the next process from the ready queue.
-	popFrontNode(readyQueue, cpuRunNode);
+	popPCB(readyQueue, cpuRunPCB);
 	TICK_COUNT = 0;
 	return;
 }
 
-void initNodeList(nodeList* list) {
+void initPCBList(PCBList* list) {
 	list->head = NULL;
 	list->tail = NULL;
 	list->listSize = 0;
 	return;
 }
 
-void pushBackNode(nodeList* list, int procNum, int cpuTime, int ioTime) {
-	Node* newNode = (Node*)malloc(sizeof(Node));
-	if (newNode == NULL) {
-		perror("push node malloc error");
+void pushPCB(PCBList* list, int procNum, int cpuTime, int ioTime) {
+	PCB* newPCB = (PCB*)malloc(sizeof(PCB));
+	if (newPCB == NULL) {
+		perror("push PCB malloc error");
 		exit(EXIT_FAILURE);
 	}
 
-	newNode->next = NULL;
-	newNode->procNum = procNum;
-	newNode->cpuTime = cpuTime;
-	newNode->ioTime = ioTime;
+	newPCB->next = NULL;
+	newPCB->procNum = procNum;
+	newPCB->cpuTime = cpuTime;
+	newPCB->ioTime = ioTime;
 
 	// the first node case.
 	if (list->head == NULL) {
-		list->head = newNode;
-		list->tail = newNode;
+		list->head = newPCB;
+		list->tail = newPCB;
 	}
 	// another node cases.
 	else {
-		list->tail->next = newNode;
-		list->tail = newNode;
+		list->tail->next = newPCB;
+		list->tail = newPCB;
 	}
 	return;
 }
 
-void popFrontNode(nodeList* list, Node* runNode) {
-	Node* oldNode = list->head;
+void popPCB(PCBList* list, PCB* runPCB) {
+	PCB* oldPCB = list->head;
 
 	// empty list case.
 	if (isEmptyList(list) == true) {
-		runNode->cpuTime = -1;
-		runNode->ioTime = -1;
-		runNode->procNum = -1;
+		runPCB->cpuTime = -1;
+		runPCB->ioTime = -1;
+		runPCB->procNum = -1;
 		return;
 	}
 
-	// pop the last node from a list case.
+	// pop the last PCB from a list case.
 	if (list->head->next == NULL) {
 		list->head = NULL;
 		list->tail = NULL;
@@ -123,28 +123,29 @@ void popFrontNode(nodeList* list, Node* runNode) {
 		list->head = list->head->next;
 	}
 
-	*runNode = *oldNode;
-	free(oldNode);
+	*runPCB = *oldPCB;
+	free(oldPCB);
 	return;
 }
 
-bool isEmptyList(nodeList* list) {
+bool isEmptyList(PCBList* list) {
 	if (list->head == NULL)
 		return true;
 	else
 		return false;
 }
 
-void deleteNode(nodeList* list) {
+void deletePCB(PCBList* list) {
 	while (isEmptyList(list) == false) {
-		Node* delNode;
-		delNode = list->head;
+		PCB* delPCB;
+		delPCB = list->head;
 		list->head = list->head->next;
-		free(delNode);
+		free(delPCB);
 	}
 }
 
-void cMsgSndIocpu(int key, int cpuBurstTime, int ioBurstTime) {
+void cMsgSndIocpu(int procNum, int cpuBurstTime, int ioBurstTime) {
+	int key = 0x3216 * (procNum + 1);
 	int qid = msgget(key, IPC_CREAT | 0666);				// create message queue ID.
 
 	struct msgBufIocpu msg;
@@ -163,7 +164,7 @@ void cMsgSndIocpu(int key, int cpuBurstTime, int ioBurstTime) {
 	return;
 }
 
-void pMsgRcvIocpu(int procNum, Node* nodePtr) {
+void pMsgRcvIocpu(int procNum, PCB* PCBPtr) {
 	int key = 0x3216 * (procNum + 1);// create message queue key.
 	int qid = msgget(key, IPC_CREAT | 0666);
 
@@ -177,8 +178,8 @@ void pMsgRcvIocpu(int procNum, Node* nodePtr) {
 	}
 
 	// copy the data of child process to nodePtr.
-	nodePtr->pid = msg.mData.pid;
-	nodePtr->cpuTime = msg.mData.cpuTime;
-	nodePtr->ioTime = msg.mData.ioTime;
+	PCBPtr->pid = msg.mData.pid;
+	PCBPtr->cpuTime = msg.mData.cpuTime;
+	PCBPtr->ioTime = msg.mData.ioTime;
 	return;
 }

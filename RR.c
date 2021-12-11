@@ -1,16 +1,5 @@
 #include "fs.h"
 
-int CPID[MAX_PROCESS];// child process pid.
-int KEY[MAX_PROCESS];// key value for message queue.
-int CONST_TICK_COUNT;
-int TICK_COUNT;
-int RUN_TIME;
-
-nodeList* waitQueue;
-nodeList* readyQueue;
-Node* cpuRunNode;
-Node* ioRunNode;
-
 int main(int argc, char* argv[]) {
 	int originCpuBurstTime[3000];
 	int originIoBurstTime[3000];
@@ -43,23 +32,23 @@ int main(int argc, char* argv[]) {
 	sigaction(SIGUSR1, &cpu, NULL);
 	sigaction(SIGUSR2, &io, NULL);
 
-	waitQueue = malloc(sizeof(nodeList));
-	readyQueue = malloc(sizeof(nodeList));
-	cpuRunNode = malloc(sizeof(Node));
-	ioRunNode = malloc(sizeof(Node));
+	waitQueue = malloc(sizeof(PCBList));
+	readyQueue = malloc(sizeof(PCBList));
+	cpuRunPCB = malloc(sizeof(PCB));
+	ioRunPCB = malloc(sizeof(PCB));
 
 	if (waitQueue == NULL || readyQueue == NULL) {
 		perror("list malloc error");
 		exit(EXIT_FAILURE);
 	}
-	if (cpuRunNode == NULL || ioRunNode == NULL) {
+	if (cpuRunPCB == NULL || ioRunPCB == NULL) {
 		perror("node malloc error");
 		exit(EXIT_FAILURE);
 	}
 
 	// initialize ready, sub-ready, wait queues.
-	initNodeList(waitQueue);
-	initNodeList(readyQueue);
+	initPCBList(waitQueue);
+	initPCBList(readyQueue);
 
 	CONST_TICK_COUNT = 0;
 	TICK_COUNT = 0;
@@ -67,8 +56,6 @@ int main(int argc, char* argv[]) {
 
 	// create message queue key.
 	for (int innerLoopIndex = 0; innerLoopIndex < MAX_PROCESS; innerLoopIndex++) {
-		KEY[innerLoopIndex] = 0x6123 * (innerLoopIndex + 1);
-		msgctl(msgget(KEY[innerLoopIndex], IPC_CREAT | 0666), IPC_RMID, NULL);
 		KEY[innerLoopIndex] = 0x3216 * (innerLoopIndex + 1);
 		msgctl(msgget(KEY[innerLoopIndex], IPC_CREAT | 0666), IPC_RMID, NULL);
 	}
@@ -116,7 +103,7 @@ int main(int argc, char* argv[]) {
 		// parent process part.
 		if (ret > 0) {
 			CPID[outerLoopIndex] = ret;
-			pushBackNode(readyQueue, outerLoopIndex, originCpuBurstTime[outerLoopIndex], originIoBurstTime[outerLoopIndex]);
+			pushPCB(readyQueue, outerLoopIndex, originCpuBurstTime[outerLoopIndex], originIoBurstTime[outerLoopIndex]);
 		}
 
 		// child process part.
@@ -125,7 +112,6 @@ int main(int argc, char* argv[]) {
 			int procNum = outerLoopIndex;
 			int cpuBurstTime = originCpuBurstTime[procNum];
 			int ioBurstTime = originIoBurstTime[procNum];
-			int VAadr[10];
 
 			// child process waits until a tick happens.
 			kill(getpid(), SIGSTOP);
@@ -134,18 +120,14 @@ int main(int argc, char* argv[]) {
 			while (true) {
 				cpuBurstTime--;// decrease cpu burst time by 1.
 				printf("            %02d            %02d\n", procNum, cpuBurstTime);
-				printf("式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式式\n");
-				for (int i = 0; i < 10; i++) {
-					srand(time(NULL) + (CONST_TICK_COUNT << (i * 2)) + i);
-					VAadr[i] = rand() % 0x40000;
-				}
+				printf("--------------------------------------------\n");
 
 				// cpu task is over.
 				if (cpuBurstTime == 0) {
 					cpuBurstTime = originCpuBurstTime[procNum + (BurstCycle * 10)];	// set the next cpu burst time.
 
 					// send the data of child process to parent process.
-					cMsgSndIocpu(KEY[procNum], cpuBurstTime, ioBurstTime);
+					cMsgSndIocpu(procNum, cpuBurstTime, ioBurstTime);
 					ioBurstTime = originIoBurstTime[procNum + (BurstCycle * 10)];	// set the next io burst time.
 
 					BurstCycle++;
@@ -166,7 +148,7 @@ int main(int argc, char* argv[]) {
 	}
 
 	// get the first node from ready queue.
-	popFrontNode(readyQueue, cpuRunNode);
+	popPCB(readyQueue, cpuRunPCB);
 	setitimer(ITIMER_REAL, &newItimer, &oldItimer);
 
 	// parent process excutes until the run time is over.
@@ -174,18 +156,16 @@ int main(int argc, char* argv[]) {
 	// remove message queues and terminate child processes.
 	for (int innerLoopIndex = 0; innerLoopIndex < MAX_PROCESS; innerLoopIndex++) {
 		msgctl(msgget(KEY[innerLoopIndex], IPC_CREAT | 0666), IPC_RMID, NULL);
-		KEY[innerLoopIndex] = 6123 * (innerLoopIndex + 1);
-		msgctl(msgget(KEY[innerLoopIndex], IPC_CREAT | 0666), IPC_RMID, NULL);
 		kill(CPID[innerLoopIndex], SIGKILL);
 	}
 
 	// free dynamic memory allocation.
-	deleteNode(readyQueue);
-	deleteNode(waitQueue);
+	deletePCB(readyQueue);
+	deletePCB(waitQueue);
 	free(readyQueue);
 	free(waitQueue);
-	free(cpuRunNode);
-	free(ioRunNode);
+	free(cpuRunPCB);
+	free(ioRunPCB);
 
 	return 0;
 }
