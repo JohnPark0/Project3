@@ -68,8 +68,8 @@ int main(int argc, char* argv[]) {
 	}
 	else {
 		// open time_set.txt file.
-		rpburst = fopen((char*)argv[1], "r");
-		if (rpburst == NULL) {
+		pBurst = fopen((char*)argv[1], "r");
+		if (pBurst == NULL) {
 			perror("file open error");
 			exit(EXIT_FAILURE);
 		}
@@ -79,7 +79,7 @@ int main(int argc, char* argv[]) {
 
 		// read time_set.txt file.
 		for (int innerLoopIndex = 0; innerLoopIndex < 3000; innerLoopIndex++) {
-			if (fscanf(rpburst, "%d , %d", &preCpuTime, &preIoTime) == EOF) {
+			if (fscanf(pBurst, "%d , %d", &preCpuTime, &preIoTime) == EOF) {
 				printf("fscanf error");
 				exit(EXIT_FAILURE);
 			}
@@ -103,7 +103,10 @@ int main(int argc, char* argv[]) {
 		// parent process part.
 		if (ret > 0) {
 			CPID[outerLoopIndex] = ret;
-			pushPCB(readyQueue, outerLoopIndex, originCpuBurstTime[outerLoopIndex], originIoBurstTime[outerLoopIndex]);
+			pMsgRcvIocpu(outerLoopIndex, cpuRunPCB);
+			//printf("%d %d %d\n", cpuRunPCB->procNum, cpuRunPCB->cpuTime, cpuRunPCB->ioTime);
+			pushPCB(readyQueue, outerLoopIndex, cpuRunPCB->cpuTime, cpuRunPCB->ioTime, 0);
+			//pushPCB(readyQueue, outerLoopIndex, 1, 1, 0);
 		}
 
 		// child process part.
@@ -112,22 +115,27 @@ int main(int argc, char* argv[]) {
 			int procNum = outerLoopIndex;
 			int cpuBurstTime = originCpuBurstTime[procNum];
 			int ioBurstTime = originIoBurstTime[procNum];
+			char fileNameBuffer[20];
 
+			randFileSelect(fileNameBuffer);
+			cMsgSndIocpu(procNum, cpuBurstTime, ioBurstTime, fileNameBuffer);
 			// child process waits until a tick happens.
 			kill(getpid(), SIGSTOP);
 
 			// cpu burst part.
 			while (true) {
 				cpuBurstTime--;// decrease cpu burst time by 1.
+				
 				printf("            %02d            %02d\n", procNum, cpuBurstTime);
 				printf("--------------------------------------------\n");
 
 				// cpu task is over.
 				if (cpuBurstTime == 0) {
 					cpuBurstTime = originCpuBurstTime[procNum + (BurstCycle * 10)];	// set the next cpu burst time.
+					randFileSelect(fileNameBuffer);
 
 					// send the data of child process to parent process.
-					cMsgSndIocpu(procNum, cpuBurstTime, ioBurstTime);
+					cMsgSndIocpu(procNum, cpuBurstTime, ioBurstTime, fileNameBuffer);
 					ioBurstTime = originIoBurstTime[procNum + (BurstCycle * 10)];	// set the next io burst time.
 
 					BurstCycle++;

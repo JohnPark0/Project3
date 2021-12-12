@@ -111,6 +111,8 @@ typedef struct processControlBlock {
 	int pid;
 	int cpuTime;
 	int ioTime;
+	int fileCond;				// 0->not open file, 1->already open file
+	char fileName[20];
 } PCB;
 
 typedef struct PCBList {
@@ -123,6 +125,7 @@ typedef struct dataIocpu {
 	int pid;
 	int cpuTime;
 	int ioTime;
+	char fileName[20];
 } dataIocpu;
 
 // message buffer that contains child process'super data.
@@ -133,17 +136,21 @@ struct msgBufIocpu {
 
 void mount(void);
 void printRootDir(void);
+int fileOpen(char* name, int mode);
+void fileWrite(char* writeBuffer);
+void fileClose(char* fileName);
+void randFileSelect(char* fileName);
 
 void signalTimeTick(int signo);
 void signalRRcpuSchedOut(int signo);
 void signalIoSchedIn(int signo);
 void initPCBList(PCBList* list);
-void pushPCB(PCBList* list, int procNum, int cpuTime, int ioTime);
+void pushPCB(PCBList* list, int procNum, int cpuTime, int ioTime, int fileCond);
 void popPCB(PCBList* list, PCB* runPCB);
 void deletePCB(PCBList* list);
-void cMsgSndIocpu(int procNum, int cpuBurstTime, int ioBurstTime);
-void pMsgRcvIocpu(int procNum, PCB* nodePtr);
 bool isEmptyList(PCBList* list);
+void cMsgSndIocpu(int procNum, int cpuBurstTime, int ioBurstTime, char* randFile);
+void pMsgRcvIocpu(int procNum, PCB* nodePtr);
 
 int CPID[MAX_PROCESS];// child process pid.
 int KEY[MAX_PROCESS];// key value for message queue.
@@ -157,8 +164,8 @@ PCB* cpuRunPCB;
 PCB* ioRunPCB;
 
 FILE* pFileSystem;
-FILE* FileDump;
-FILE* rpburst;
+FILE* pFileDump;
+FILE* pBurst;
 partition part;
 dentry dirEntry;
 

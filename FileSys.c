@@ -2,7 +2,7 @@
 
 void mount(void) {
 	pFileSystem = fopen("disk.img", "r+");
-	FileDump = fopen("File_dump.txt", "w");
+	pFileDump = fopen("File_dump.txt", "w");
 
 	if (pFileSystem == NULL) {
 		printf("There are no disk.img,\n");
@@ -10,47 +10,50 @@ void mount(void) {
 	}
 
 	fread(&part.super, sizeof(superBlock), 1, pFileSystem);										//copy sizeof(superBlock) bytes to buffer<part.super>
-	fprintf(FileDump, "---------------------SuperBlcok Contents---------------------\n");
-	fprintf(FileDump, "  Partition Type   - %d\n", part.super.partitionType);
-	fprintf(FileDump, "  Block Size       - %d bytes\n", part.super.blockSize);
-	fprintf(FileDump, "  Inode Size       - %d bytes\n", part.super.inodeSize);
-	fprintf(FileDump, "  First Inode      - %d\n", part.super.firstInode);
-	fprintf(FileDump, "  num Inodes       - %d\n", part.super.numInodes);
-	fprintf(FileDump, "  num Inode Blocks - %d\n", part.super.numInodeBlocks);
-	fprintf(FileDump, "  num Free Inodes  - %d\n", part.super.numFreeInodes);
-	fprintf(FileDump, "  num Blocks       - %d\n", part.super.numBlocks);
-	fprintf(FileDump, "  num Free Blocks  - %d\n", part.super.numFreeBlocks);
-	fprintf(FileDump, "  First Data Block - %d\n", part.super.firstDataBlock);
-	fprintf(FileDump, "  Volume Name      - %s\n", part.super.volumeName);
-	fprintf(FileDump, "-------------------------------------------------------------\n");
+	fprintf(pFileDump, "---------------------SuperBlcok Contents---------------------\n");
+	fprintf(pFileDump, "  Partition Type   - %d\n", part.super.partitionType);
+	fprintf(pFileDump, "  Block Size       - %d bytes\n", part.super.blockSize);
+	fprintf(pFileDump, "  Inode Size       - %d bytes\n", part.super.inodeSize);
+	fprintf(pFileDump, "  First Inode      - %d\n", part.super.firstInode);
+	fprintf(pFileDump, "  num Inodes       - %d\n", part.super.numInodes);
+	fprintf(pFileDump, "  num Inode Blocks - %d\n", part.super.numInodeBlocks);
+	fprintf(pFileDump, "  num Free Inodes  - %d\n", part.super.numFreeInodes);
+	fprintf(pFileDump, "  num Blocks       - %d\n", part.super.numBlocks);
+	fprintf(pFileDump, "  num Free Blocks  - %d\n", part.super.numFreeBlocks);
+	fprintf(pFileDump, "  First Data Block - %d\n", part.super.firstDataBlock);
+	fprintf(pFileDump, "  Volume Name      - %s\n", part.super.volumeName);
+	fprintf(pFileDump, "-------------------------------------------------------------\n");
 
 	for (int i = 0; i < 224; i++) {
 		fread(&part.inodeTable[i], sizeof(inode), 1, pFileSystem);
 
-		fprintf(FileDump, "---------------------Inode[%3d] Contents---------------------\n", i);
-		fprintf(FileDump, "  Mode           - %d\n", part.inodeTable[i].mode);					//File type + Mode ex) 0x1:0777 = Reg(0x1:0000) + AC_ALL(0x777)
-		fprintf(FileDump, "  Locked         - %d\n", part.inodeTable[i].locked);
-		fprintf(FileDump, "  Date           - %d\n", part.inodeTable[i].date);
-		fprintf(FileDump, "  File Size      - %d bytes\n", part.inodeTable[i].size);
-		fprintf(FileDump, "  Indirect Blcok - %d\n", part.inodeTable[i].indirectBlock);
-		fprintf(FileDump, "  Blocks - ");
+		fprintf(pFileDump, "---------------------Inode[%3d] Contents---------------------\n", i);
+		fprintf(pFileDump, "  Mode           - %d\n", part.inodeTable[i].mode);					//File type + Mode ex) 0x1:0777 = Reg(0x1:0000) + AC_ALL(0x777)
+		fprintf(pFileDump, "  Locked         - %d\n", part.inodeTable[i].locked);
+		fprintf(pFileDump, "  Date           - %d\n", part.inodeTable[i].date);
+		fprintf(pFileDump, "  File Size      - %d bytes\n", part.inodeTable[i].size);
+		fprintf(pFileDump, "  Indirect Blcok - %d\n", part.inodeTable[i].indirectBlock);
+		fprintf(pFileDump, "  Blocks - ");
 		for (int t = 0; t < 6; t++) {
-			fprintf(FileDump, "%d ", part.inodeTable[i].blocks[t]);
+			fprintf(pFileDump, "%d ", part.inodeTable[i].blocks[t]);
 		}
-		fprintf(FileDump, "\n-------------------------------------------------------------\n");
+		fprintf(pFileDump, "\n-------------------------------------------------------------\n");
 	}
-	fclose(FileDump);
+	fclose(pFileDump);
 }
 
 void printRootDir(void) {
 	int blockNum = part.inodeTable[part.super.firstInode].size / BLOCK_SIZE;							//BLOCK_SIZE = 0x400
 	int blockLocation;
 
-	FileDump = fopen("File_dump.txt", "a+");
+	if ((part.inodeTable[part.super.firstInode].size % BLOCK_SIZE) != 0) {
+		blockNum++;
+	}
 
-	fprintf(FileDump, "------------------------Root Directory-----------------------\n");
-	for (int i = 0, m = 1; i < blockNum + 1; i++) {
-		//blockLocation = First Data Block -> 
+	pFileDump = fopen("File_dump.txt", "a+");
+
+	fprintf(pFileDump, "-------------------------------------------------Root Directory------------------------------------------------\n");
+	for (int i = 0, m = 1; i < blockNum; i++) {
 		blockLocation = (BLOCK_SIZE * part.super.firstDataBlock) + (part.inodeTable[part.super.firstInode].blocks[i] * BLOCK_SIZE);
 		fseek(pFileSystem, blockLocation, SEEK_SET);
 		for (int t = 0; t < BLOCK_SIZE; t = t + 32, m++) {
@@ -59,23 +62,30 @@ void printRootDir(void) {
 			fread(&dirEntry.nameLen, sizeof(int), 1, pFileSystem);
 			fread(&dirEntry.fileType, sizeof(int), 1, pFileSystem);
 			fread(&dirEntry.name, sizeof(char), 16, pFileSystem);
-			fprintf(FileDump, "%15s ", dirEntry.name);
+			if (dirEntry.inode == 0) {								//End -> stop printing
+				break;
+			}
+			fprintf(pFileDump, "%15s ", dirEntry.name);
 			if (m % 7 == 0) {																		//Every 7 print -> new line
-				fprintf(FileDump, "\n");
+				fprintf(pFileDump, "\n");
 			}
 		}
 	}
-	fprintf(FileDump, "\n-------------------------------------------------------------\n");
+	fprintf(pFileDump, "\n---------------------------------------------------------------------------------------------------------------\n");
 
-	fclose(FileDump);
+	fclose(pFileDump);
 }
 
 int fileOpen(char* name, int mode) {
 	int blockLocation;
 	int blockNum = part.inodeTable[part.super.firstInode].size / BLOCK_SIZE;
 
+	if ((part.inodeTable[part.super.firstInode].size % BLOCK_SIZE) != 0) {
+		blockNum++;
+	}
+
 	if (mode == 1 || mode == 2) {										//mode 1 => Read, mode 2 => write
-		for (int i = 0; i < blockNum + 1; i++) {
+		for (int i = 0; i < blockNum; i++) {
 			blockLocation = (BLOCK_SIZE * part.super.firstDataBlock) + (part.inodeTable[part.super.firstInode].blocks[i] * BLOCK_SIZE);
 			fseek(pFileSystem, blockLocation, SEEK_SET);
 			for (int t = 0; t < BLOCK_SIZE; t = t + 32) {
@@ -85,10 +95,10 @@ int fileOpen(char* name, int mode) {
 				fread(&dirEntry.fileType, sizeof(int), 1, pFileSystem);
 				fread(&dirEntry.name, sizeof(char), 16, pFileSystem);
 				if (strcmp(name, dirEntry.name) == 0) {					//FILE exist
+					printf("File open \n");
 					return 0;
 				}
 			}
-
 		}
 	}
 	else {
@@ -101,17 +111,41 @@ int fileOpen(char* name, int mode) {
 	return 2;
 }
 
-void fileWrite(char* writeBuffer, int dataSize) {
+void randFileSelect(char* fileName) {
+	int fileNum = part.inodeTable[part.super.firstInode].size / 32;										//Directroy Entry = 32 bytes
+	int randFile;
+	int fileLocation;
+	int blockNum;
+
+	//======Random Seed reset========
+	randFile = rand();
+	srand(time(NULL) + randFile);
+	//===============================
+	randFile = rand() % fileNum;
+	
+	blockNum = randFile / 32;
+
+	fileLocation = (BLOCK_SIZE * part.super.firstDataBlock) + (part.inodeTable[part.super.firstInode].blocks[blockNum] * BLOCK_SIZE) + ((randFile % 32) * 32) + 16;
+	fseek(pFileSystem, fileLocation, SEEK_SET);
+	fread(&dirEntry.name, sizeof(char), 16, pFileSystem);
+	strcpy(fileName, dirEntry.name);
+}
+
+void fileWrite(char* writeBuffer) {
 	int blockNum = part.inodeTable[dirEntry.inode].size / BLOCK_SIZE;
 	int fileLocation;
-	char writeData[BLOCK_SIZE] = "writeData";
+	char writeData[BLOCK_SIZE];
+	strcpy(writeData, writeBuffer);
+
+	if ((part.inodeTable[part.super.firstInode].size % BLOCK_SIZE) == 0) {
+		blockNum--;
+	}
 
 	fileLocation = (BLOCK_SIZE * part.super.firstDataBlock) + (BLOCK_SIZE * part.inodeTable[dirEntry.inode].blocks[blockNum]);
 	fseek(pFileSystem, fileLocation, SEEK_SET);
 	fwrite(writeData, sizeof(char), BLOCK_SIZE, pFileSystem);
 }
 
-
-void fileClose(void) {
+void fileClose(char* fileName) {
 	memset(&dirEntry, 0, sizeof(dentry));
 }
