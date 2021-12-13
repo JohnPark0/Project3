@@ -136,16 +136,17 @@ struct msgBufIocpu {
 
 void mount(void);
 void printRootDir(void);
-int fileOpen(char* name, int mode);
+int fileOpen(char* fileName, int mode);
 void fileWrite(char* writeBuffer);
 void fileClose(char* fileName);
 void randFileSelect(char* fileName);
+int hashFun(char* fileName);
 
 void signalTimeTick(int signo);
 void signalRRcpuSchedOut(int signo);
 void signalIoSchedIn(int signo);
 void initPCBList(PCBList* list);
-void pushPCB(PCBList* list, int procNum, int cpuTime, int ioTime, int fileCond);
+void pushPCB(PCBList* list, int procNum, int cpuTime, int ioTime, int fileCond, char* fileName);
 void popPCB(PCBList* list, PCB* runPCB);
 void deletePCB(PCBList* list);
 bool isEmptyList(PCBList* list);

@@ -24,11 +24,11 @@ void signalTimeTick(int signo) {								//SIGALRM
 
 		// io task is over, then push node to ready queue.
 		if (ioRunPCB->ioTime == 0) {
-			pushPCB(readyQueue, ioRunPCB->procNum, ioRunPCB->cpuTime, ioRunPCB->ioTime, ioRunPCB->fileCond);
+			pushPCB(readyQueue, ioRunPCB->procNum, ioRunPCB->cpuTime, ioRunPCB->ioTime, ioRunPCB->fileCond, ioRunPCB->fileName);
 		}
 		// io task is not over, then push node to wait queue again.
 		else {
-			pushPCB(waitQueue, ioRunPCB->procNum, ioRunPCB->cpuTime, ioRunPCB->ioTime, ioRunPCB->fileCond);
+			pushPCB(waitQueue, ioRunPCB->procNum, ioRunPCB->cpuTime, ioRunPCB->ioTime, ioRunPCB->fileCond, ioRunPCB->fileName);
 		}
 	}
 	// cpu burst part.
@@ -48,19 +48,20 @@ void signalRRcpuSchedOut(int signo) {							//SIGUSR1
 	if (cpuRunPCB->fileCond == 0) {							//file not opened
 		openMode = rand();
 		srand(time(NULL) + openMode);
-		//openMode = rand() % 2;
-		openMode = 3;			//임시
+		openMode = rand() % 2;
+		//printf("%s\n", &cpuRunPCB->fileName);
 		if (fileOpen(cpuRunPCB->fileName, openMode) == 0) {	//file oepn success
 			cpuRunPCB->fileCond = 1;
 		}
 	}
-	if (cpuRunPCB->fileCond == 1) {							//file already opened
-		fileWrite("write buffer");			//수정할 부분
-	}
+	printf("--------------------------------------------\n");
+	//if (cpuRunPCB->fileCond == 1) {							//file already opened
+	//	fileWrite("write buffer");			//수정할 부분
+	//}
 
 	// scheduler changes cpu preemptive process at every time quantum.
 	if (TICK_COUNT >= TIME_QUANTUM) {
-		pushPCB(readyQueue, cpuRunPCB->procNum, cpuRunPCB->cpuTime, cpuRunPCB->ioTime, cpuRunPCB->fileCond);
+		pushPCB(readyQueue, cpuRunPCB->procNum, cpuRunPCB->cpuTime, cpuRunPCB->ioTime, cpuRunPCB->fileCond, cpuRunPCB->fileName);
 
 		// pop the next process from the ready queue.
 		popPCB(readyQueue, cpuRunPCB);
@@ -70,18 +71,18 @@ void signalRRcpuSchedOut(int signo) {							//SIGUSR1
 }
 
 void signalIoSchedIn(int signo) {								//SIGUSR2
-	fileClose(cpuRunPCB->fileName);
+	//fileClose(cpuRunPCB->fileName);
 	cpuRunPCB->fileCond = 0;
 
 	pMsgRcvIocpu(cpuRunPCB->procNum, cpuRunPCB);
 
 	// process that has no io task go to the end of the ready queue.
 	if (cpuRunPCB->ioTime == 0) {
-		pushPCB(readyQueue, cpuRunPCB->procNum, cpuRunPCB->cpuTime, cpuRunPCB->ioTime, cpuRunPCB->fileCond);
+		pushPCB(readyQueue, cpuRunPCB->procNum, cpuRunPCB->cpuTime, cpuRunPCB->ioTime, cpuRunPCB->fileCond, cpuRunPCB->fileName);
 	}
 	// process that has io task go to the end of the wait queue.
 	else {
-		pushPCB(waitQueue, cpuRunPCB->procNum, cpuRunPCB->cpuTime, cpuRunPCB->ioTime, cpuRunPCB->fileCond);
+		pushPCB(waitQueue, cpuRunPCB->procNum, cpuRunPCB->cpuTime, cpuRunPCB->ioTime, cpuRunPCB->fileCond, cpuRunPCB->fileName);
 	}
 
 	// pop the next process from the ready queue.
@@ -97,7 +98,7 @@ void initPCBList(PCBList* list) {
 	return;
 }
 
-void pushPCB(PCBList* list, int procNum, int cpuTime, int ioTime, int fileCond) {
+void pushPCB(PCBList* list, int procNum, int cpuTime, int ioTime, int fileCond, char* fileName) {
 	PCB* newPCB = (PCB*)malloc(sizeof(PCB));
 	if (newPCB == NULL) {
 		perror("push PCB malloc error");
@@ -109,7 +110,7 @@ void pushPCB(PCBList* list, int procNum, int cpuTime, int ioTime, int fileCond) 
 	newPCB->cpuTime = cpuTime;
 	newPCB->ioTime = ioTime;
 	newPCB->fileCond = fileCond;
-	newPCB->fileName[0] = '\0';
+	strcpy(newPCB->fileName, fileName);
 
 	// the first node case.
 	if (list->head == NULL) {

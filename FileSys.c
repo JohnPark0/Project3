@@ -76,7 +76,51 @@ void printRootDir(void) {
 	fclose(pFileDump);
 }
 
-int fileOpen(char* name, int mode) {
+int fileOpen(char* fileName, int mode) {
+	int inodeNum = hashFun(fileName);
+	int inodeLocation;
+	inode inodeBuffer;
+	int permission;
+
+	if (inodeNum == -1) {
+		printf("There are no file : %s\n", fileName);
+		return 1;
+	}
+	inodeLocation = (sizeof(superBlock)) + (inodeNum * 32);
+	fseek(pFileSystem, inodeLocation, SEEK_SET);
+	fread(&inodeBuffer, sizeof(inode), 1, pFileSystem);
+	permission = inodeBuffer.mode & 0xFFF;
+
+	if (mode == 0) {			//mode 0 -> read mode
+		if (permission == 0x777 || permission == 0x1) {
+			printf("File [%s] Open as Read Mode\n",fileName);
+			return 0;
+		}
+		else {
+			printf("Permission Deny\n");
+			return 1;
+		}
+	}
+	else if (mode == 1) {		//mode 1 -> write mode
+		if (permission == 0x777 || permission == 0x2) {
+			fseek(pFileSystem, inodeLocation, SEEK_SET);
+			inodeBuffer.locked = 1;
+			fwrite(&inodeBuffer, 1, sizeof(inode), pFileSystem);		//Update inode Lock condition
+			printf("File [%s] Open as Write Mode\n",fileName);
+			return 0;
+		}
+		else {
+			printf("Permission Deny\n");
+			return 1;
+		}
+	}
+	else {
+		printf("Wrong Mode : File Open Fail\n");
+		return 1;
+	}
+}
+
+int fileOpen2(char* fileName, int mode) {
 	int blockLocation;
 	int blockNum = part.inodeTable[part.super.firstInode].size / BLOCK_SIZE;
 
@@ -84,7 +128,7 @@ int fileOpen(char* name, int mode) {
 		blockNum++;
 	}
 
-	if (mode == 1 || mode == 2) {										//mode 1 => Read, mode 2 => write
+	if (mode == 0 || mode == 1) {										//mode 0 => Read, mode 1 => write
 		for (int i = 0; i < blockNum; i++) {
 			blockLocation = (BLOCK_SIZE * part.super.firstDataBlock) + (part.inodeTable[part.super.firstInode].blocks[i] * BLOCK_SIZE);
 			fseek(pFileSystem, blockLocation, SEEK_SET);
@@ -94,7 +138,7 @@ int fileOpen(char* name, int mode) {
 				fread(&dirEntry.nameLen, sizeof(int), 1, pFileSystem);
 				fread(&dirEntry.fileType, sizeof(int), 1, pFileSystem);
 				fread(&dirEntry.name, sizeof(char), 16, pFileSystem);
-				if (strcmp(name, dirEntry.name) == 0) {					//FILE exist
+				if (strcmp(fileName, dirEntry.name) == 0) {					//FILE exist
 					printf("File open \n");
 					return 0;
 				}
@@ -148,4 +192,20 @@ void fileWrite(char* writeBuffer) {
 
 void fileClose(char* fileName) {
 	memset(&dirEntry, 0, sizeof(dentry));
+}
+
+int hashFun(char* fileName) {
+	int hash;
+	char buffer[20];
+	char* fNameBuffer;
+	int fNumBuffer;
+	
+	strcpy(buffer, fileName);
+
+	fNameBuffer = strtok(buffer, " file_");
+	if (fNameBuffer == NULL) {
+		return -1;					//No hash -> No File
+	}
+	fNumBuffer = atoi(fNameBuffer);
+	return fNumBuffer + 2;			//return inode number
 }

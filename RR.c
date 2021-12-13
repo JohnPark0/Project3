@@ -90,6 +90,29 @@ int main(int argc, char* argv[]) {
 		RUN_TIME = atoi(argv[2]);
 		RUN_TIME = RUN_TIME * 1000000 / TIME_TICK;
 	}
+
+	//FOR TEST//
+	/*int t;
+	char* m = "file_3";
+	char j[100];
+	t = hashFun(m);
+	printf("%d\n", t);
+	int fileLocation = (BLOCK_SIZE * part.super.firstDataBlock) + (4*1024);
+	fseek(pFileSystem, fileLocation, SEEK_SET);
+	fread(j, sizeof(char), 1024, pFileSystem);
+	printf("test : %s\n", j);*/
+	//int inodeNum = 3;
+	//int inodeLocation = (sizeof(superBlock)) + (inodeNum * 32);
+	//inode inodeBuffer;
+	//fseek(pFileSystem, inodeLocation, SEEK_SET);
+	//fread(&inodeBuffer, sizeof(inode), 1, pFileSystem);
+	////printf("test %d\n", inodeBuffer.size);
+	//int t = fileOpen("file_7", 0);
+	//printf("%d\n", t);
+
+	//TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST
+
+
 	printf("\x1b[33m");
 	printf("TIME TICK   PROC NUMBER   REMAINED CPU TIME\n");
 	printf("\x1b[0m");
@@ -104,9 +127,8 @@ int main(int argc, char* argv[]) {
 		if (ret > 0) {
 			CPID[outerLoopIndex] = ret;
 			pMsgRcvIocpu(outerLoopIndex, cpuRunPCB);
-			//printf("%d %d %d\n", cpuRunPCB->procNum, cpuRunPCB->cpuTime, cpuRunPCB->ioTime);
-			pushPCB(readyQueue, outerLoopIndex, cpuRunPCB->cpuTime, cpuRunPCB->ioTime, 0);
-			//pushPCB(readyQueue, outerLoopIndex, 1, 1, 0);
+			printf("%s\n", cpuRunPCB->fileName);
+			pushPCB(readyQueue, outerLoopIndex, cpuRunPCB->cpuTime, cpuRunPCB->ioTime, 0, cpuRunPCB->fileName);
 		}
 
 		// child process part.
@@ -127,7 +149,7 @@ int main(int argc, char* argv[]) {
 				cpuBurstTime--;// decrease cpu burst time by 1.
 				
 				printf("            %02d            %02d\n", procNum, cpuBurstTime);
-				printf("--------------------------------------------\n");
+				
 
 				// cpu task is over.
 				if (cpuBurstTime == 0) {
