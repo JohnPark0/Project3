@@ -7,7 +7,7 @@
   num Inode Blocks - 7
   num Free Inodes  - 121
   num Blocks       - 4088
-  num Free Blocks  - 4088
+  num Free Blocks  - 3984
   First Data Block - 8
   Volume Name      - Simple_partition_volume
 -------------------------------------------------------------
@@ -101,7 +101,7 @@
 -------------------------------------------------------------
 ---------------------Inode[ 11] Contents---------------------
   Mode           - 67447
-  Locked         - 0
+  Locked         - 1
   Date           - 0
   File Size      - 38 bytes
   Indirect Blcok - -1
@@ -173,7 +173,7 @@
 -------------------------------------------------------------
 ---------------------Inode[ 20] Contents---------------------
   Mode           - 67447
-  Locked         - 0
+  Locked         - 1
   Date           - 0
   File Size      - 36 bytes
   Indirect Blcok - -1
@@ -269,7 +269,7 @@
 -------------------------------------------------------------
 ---------------------Inode[ 32] Contents---------------------
   Mode           - 67447
-  Locked         - 0
+  Locked         - 1
   Date           - 0
   File Size      - 41 bytes
   Indirect Blcok - -1
@@ -309,7 +309,7 @@
 -------------------------------------------------------------
 ---------------------Inode[ 37] Contents---------------------
   Mode           - 67447
-  Locked         - 0
+  Locked         - 1
   Date           - 0
   File Size      - 39 bytes
   Indirect Blcok - -1
@@ -389,7 +389,7 @@
 -------------------------------------------------------------
 ---------------------Inode[ 47] Contents---------------------
   Mode           - 67447
-  Locked         - 1
+  Locked         - 0
   Date           - 0
   File Size      - 40 bytes
   Indirect Blcok - -1
@@ -461,7 +461,7 @@
 -------------------------------------------------------------
 ---------------------Inode[ 56] Contents---------------------
   Mode           - 67447
-  Locked         - 1
+  Locked         - 0
   Date           - 0
   File Size      - 39 bytes
   Indirect Blcok - -1
@@ -533,7 +533,7 @@
 -------------------------------------------------------------
 ---------------------Inode[ 65] Contents---------------------
   Mode           - 67447
-  Locked         - 0
+  Locked         - 1
   Date           - 0
   File Size      - 41 bytes
   Indirect Blcok - -1
@@ -541,7 +541,7 @@
 -------------------------------------------------------------
 ---------------------Inode[ 66] Contents---------------------
   Mode           - 67447
-  Locked         - 1
+  Locked         - 0
   Date           - 0
   File Size      - 40 bytes
   Indirect Blcok - -1
@@ -581,7 +581,7 @@
 -------------------------------------------------------------
 ---------------------Inode[ 71] Contents---------------------
   Mode           - 67447
-  Locked         - 0
+  Locked         - 1
   Date           - 0
   File Size      - 38 bytes
   Indirect Blcok - -1
@@ -613,7 +613,7 @@
 -------------------------------------------------------------
 ---------------------Inode[ 75] Contents---------------------
   Mode           - 67447
-  Locked         - 0
+  Locked         - 1
   Date           - 0
   File Size      - 40 bytes
   Indirect Blcok - -1
@@ -621,7 +621,7 @@
 -------------------------------------------------------------
 ---------------------Inode[ 76] Contents---------------------
   Mode           - 67447
-  Locked         - 1
+  Locked         - 0
   Date           - 0
   File Size      - 40 bytes
   Indirect Blcok - -1
@@ -669,7 +669,7 @@
 -------------------------------------------------------------
 ---------------------Inode[ 82] Contents---------------------
   Mode           - 67447
-  Locked         - 0
+  Locked         - 1
   Date           - 0
   File Size      - 41 bytes
   Indirect Blcok - -1
@@ -741,7 +741,7 @@
 -------------------------------------------------------------
 ---------------------Inode[ 91] Contents---------------------
   Mode           - 67447
-  Locked         - 0
+  Locked         - 1
   Date           - 0
   File Size      - 40 bytes
   Indirect Blcok - -1
@@ -797,7 +797,7 @@
 -------------------------------------------------------------
 ---------------------Inode[ 98] Contents---------------------
   Mode           - 67447
-  Locked         - 0
+  Locked         - 1
   Date           - 0
   File Size      - 38 bytes
   Indirect Blcok - -1
@@ -829,7 +829,7 @@
 -------------------------------------------------------------
 ---------------------Inode[102] Contents---------------------
   Mode           - 67447
-  Locked         - 1
+  Locked         - 0
   Date           - 0
   File Size      - 42 bytes
   Indirect Blcok - -1
@@ -1804,15 +1804,19 @@
   Blocks - 0 0 0 0 0 0 
 -------------------------------------------------------------
 -------------------------------------------------Root Directory------------------------------------------------
-         ðè™ÿ                            £›BÍ            £›BÍ                                        file_31 
-        file_32         file_33         file_34         file_35         file_36         file_37         file_38 
-        file_39         file_40         file_41         file_42         file_43         file_44         file_45 
-        file_46         file_47         file_48         file_49         file_50         file_51         file_52 
-        file_53         file_54         file_55         file_56         file_57         file_58         file_59 
-        file_60         file_61         file_62         file_63         file_64         file_65         file_66 
-        file_67         file_68         file_69         file_70         file_71         file_72         file_73 
-        file_74         file_75         file_76         file_77           ÿÿÿÿ0         file_79         file_80 
-        file_81         file_82         file_83         file_84         file_85         file_86         file_87 
-        file_88         file_89         file_90         file_91         file_92         file_93         file_94 
-        file_95         file_96         file_97         file_98         file_99        file_100 
+              .              ..          file_1          file_2          file_3          file_4          file_5 
+         file_6          file_7          file_8          file_9         file_10         file_11         file_12 
+        file_13         file_14         file_15         file_16         file_17         file_18         file_19 
+        file_20         file_21         file_22         file_23         file_24         file_25         file_26 
+        file_27         file_28         file_29         file_30         file_31         file_32         file_33 
+        file_34         file_35         file_36         file_37         file_38         file_39         file_40 
+        file_41         file_42         file_43         file_44         file_45         file_46         file_47 
+        file_48         file_49         file_50         file_51         file_52         file_53         file_54 
+        file_55         file_56         file_57         file_58         file_59         file_60         file_61 
+        file_62         file_63         file_64         file_65         file_66         file_67         file_68 
+        file_69         file_70         file_71         file_72         file_73         file_74         file_75 
+        file_76         file_77         file_78         file_79         file_80         file_81         file_82 
+        file_83         file_84         file_85         file_86         file_87         file_88         file_89 
+        file_90         file_91         file_92         file_93         file_94         file_95         file_96 
+        file_97         file_98         file_99        file_100 
 ---------------------------------------------------------------------------------------------------------------

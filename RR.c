@@ -5,6 +5,7 @@ int main(int argc, char* argv[]) {
 	int originIoBurstTime[3000];
 	int ppid = getpid();			// get parent process id.
 
+	numFreeBlocks = 4088;
 	mount();
 	printRootDir();
 
@@ -23,6 +24,7 @@ int main(int argc, char* argv[]) {
 	memset(&tick, 0, sizeof(tick));
 	memset(&cpu, 0, sizeof(cpu));
 	memset(&io, 0, sizeof(io));
+	memset(freeBlocks, 0, sizeof(freeBlocks));
 
 	tick.sa_handler = &signalTimeTick;
 	cpu.sa_handler = &signalRRcpuSchedOut;
@@ -110,6 +112,7 @@ int main(int argc, char* argv[]) {
 	//int t = fileOpen("file_7", 0);
 	//printf("%d\n", t);
 
+
 	//TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST
 
 
@@ -122,13 +125,14 @@ int main(int argc, char* argv[]) {
 	for (int outerLoopIndex = 0; outerLoopIndex < MAX_PROCESS; outerLoopIndex++) {
 		// create child process.
 		int ret = fork();
-
+		
 		// parent process part.
 		if (ret > 0) {
 			CPID[outerLoopIndex] = ret;
-			pMsgRcvIocpu(outerLoopIndex, cpuRunPCB);
-			printf("%s\n", cpuRunPCB->fileName);
-			pushPCB(readyQueue, outerLoopIndex, cpuRunPCB->cpuTime, cpuRunPCB->ioTime, 0, cpuRunPCB->fileName);
+			pMsgRcvIocpu(outerLoopIndex, cpuRunPCB);		//Using cpuRunPCB as temp Buffer
+			cpuRunPCB->openFile.fileCond = 0;
+			cpuRunPCB->openFile.offSet = 0;
+			pushPCB(readyQueue, outerLoopIndex, cpuRunPCB->cpuTime, cpuRunPCB->ioTime, cpuRunPCB->openFile);
 		}
 
 		// child process part.
@@ -188,7 +192,7 @@ int main(int argc, char* argv[]) {
 		msgctl(msgget(KEY[innerLoopIndex], IPC_CREAT | 0666), IPC_RMID, NULL);
 		kill(CPID[innerLoopIndex], SIGKILL);
 	}
-
+	unmount();
 	// free dynamic memory allocation.
 	deletePCB(readyQueue);
 	deletePCB(waitQueue);

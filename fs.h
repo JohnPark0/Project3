@@ -105,14 +105,20 @@ typedef struct dentry {
 /*
 	Round Robin Scheduling Struct
 */
+
+typedef struct PCBfile {
+	char fileName[20];
+	int fileCond;					// 0->not open file, 1->open read, 2->open write
+	int offSet;
+} PCBfile;
+
 typedef struct processControlBlock {
 	struct processControlBlock* next;
 	int procNum;
 	int pid;
 	int cpuTime;
 	int ioTime;
-	int fileCond;				// 0->not open file, 1->already open file
-	char fileName[20];
+	PCBfile openFile;
 } PCB;
 
 typedef struct PCBList {
@@ -135,10 +141,12 @@ struct msgBufIocpu {
 };
 
 void mount(void);
+void unmount(void);
 void printRootDir(void);
 int fileOpen(char* fileName, int mode);
-void fileWrite(char* writeBuffer);
-void fileClose(char* fileName);
+int fileClose(char* fileName, int mode);
+int fileWrite(PCB* fileDescriptor, char* bufferPointer);
+int fileRead(PCB* fileDescriptor, char* bufferPointer, int readDataSize);
 void randFileSelect(char* fileName);
 int hashFun(char* fileName);
 
@@ -146,7 +154,7 @@ void signalTimeTick(int signo);
 void signalRRcpuSchedOut(int signo);
 void signalIoSchedIn(int signo);
 void initPCBList(PCBList* list);
-void pushPCB(PCBList* list, int procNum, int cpuTime, int ioTime, int fileCond, char* fileName);
+void pushPCB(PCBList* list, int procNum, int cpuTime, int ioTime, PCBfile file);
 void popPCB(PCBList* list, PCB* runPCB);
 void deletePCB(PCBList* list);
 bool isEmptyList(PCBList* list);
@@ -158,6 +166,8 @@ int KEY[MAX_PROCESS];// key value for message queue.
 int CONST_TICK_COUNT;
 int TICK_COUNT;
 int RUN_TIME;
+int freeBlocks[4088];
+int numFreeBlocks;
 
 PCBList* waitQueue;
 PCBList* readyQueue;
@@ -169,5 +179,4 @@ FILE* pFileDump;
 FILE* pBurst;
 partition part;
 dentry dirEntry;
-
 
