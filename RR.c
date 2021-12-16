@@ -93,31 +93,8 @@ int main(int argc, char* argv[]) {
 		RUN_TIME = RUN_TIME * 1000000 / TIME_TICK;
 	}
 
-	//FOR TEST//
-	/*int t;
-	char* m = "file_3";
-	char j[100];
-	t = hashFun(m);
-	printf("%d\n", t);
-	int fileLocation = (BLOCK_SIZE * part.super.firstDataBlock) + (4*1024);
-	fseek(pFileSystem, fileLocation, SEEK_SET);
-	fread(j, sizeof(char), 1024, pFileSystem);
-	printf("test : %s\n", j);*/
-	//int inodeNum = 3;
-	//int inodeLocation = (sizeof(superBlock)) + (inodeNum * 32);
-	//inode inodeBuffer;
-	//fseek(pFileSystem, inodeLocation, SEEK_SET);
-	//fread(&inodeBuffer, sizeof(inode), 1, pFileSystem);
-	////printf("test %d\n", inodeBuffer.size);
-	//int t = fileOpen("file_7", 0);
-	//printf("%d\n", t);
-
-
-	//TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST TEST
-
-
 	printf("\x1b[33m");
-	printf("TIME TICK   PROC NUMBER   REMAINED CPU TIME\n");
+	printf("TIME TICK   PROC NUMBER   REMAINED IO TIME\n");
 	printf("\x1b[0m");
 
 	//////////////////////////////////////////////////////////////////////////////////////////////////
@@ -130,7 +107,7 @@ int main(int argc, char* argv[]) {
 		if (ret > 0) {
 			CPID[outerLoopIndex] = ret;
 			pMsgRcvIocpu(outerLoopIndex, cpuRunPCB);		//Using cpuRunPCB as temp Buffer
-			cpuRunPCB->openFile.fileCond = 0;
+			cpuRunPCB->openFile.fileCond = 0;				//Init PCB openFile struct member
 			cpuRunPCB->openFile.offSet = 0;
 			pushPCB(readyQueue, outerLoopIndex, cpuRunPCB->cpuTime, cpuRunPCB->ioTime, cpuRunPCB->openFile);
 		}
@@ -143,25 +120,20 @@ int main(int argc, char* argv[]) {
 			int ioBurstTime = originIoBurstTime[procNum];
 			char fileNameBuffer[20];
 
-			randFileSelect(fileNameBuffer);
-			cMsgSndIocpu(procNum, cpuBurstTime, ioBurstTime, fileNameBuffer);
+			cMsgSndIocpu(procNum, cpuBurstTime, ioBurstTime);
 			// child process waits until a tick happens.
 			kill(getpid(), SIGSTOP);
 
 			// cpu burst part.
 			while (true) {
 				cpuBurstTime--;// decrease cpu burst time by 1.
-				
-				printf("            %02d            %02d\n", procNum, cpuBurstTime);
-				
-
+			
 				// cpu task is over.
 				if (cpuBurstTime == 0) {
 					cpuBurstTime = originCpuBurstTime[procNum + (BurstCycle * 10)];	// set the next cpu burst time.
-					randFileSelect(fileNameBuffer);
 
 					// send the data of child process to parent process.
-					cMsgSndIocpu(procNum, cpuBurstTime, ioBurstTime, fileNameBuffer);
+					cMsgSndIocpu(procNum, cpuBurstTime, ioBurstTime);
 					ioBurstTime = originIoBurstTime[procNum + (BurstCycle * 10)];	// set the next io burst time.
 
 					BurstCycle++;

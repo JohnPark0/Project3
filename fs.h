@@ -158,7 +158,7 @@ void pushPCB(PCBList* list, int procNum, int cpuTime, int ioTime, PCBfile file);
 void popPCB(PCBList* list, PCB* runPCB);
 void deletePCB(PCBList* list);
 bool isEmptyList(PCBList* list);
-void cMsgSndIocpu(int procNum, int cpuBurstTime, int ioBurstTime, char* randFile);
+void cMsgSndIocpu(int procNum, int cpuBurstTime, int ioBurstTime);
 void pMsgRcvIocpu(int procNum, PCB* nodePtr);
 
 int CPID[MAX_PROCESS];// child process pid.

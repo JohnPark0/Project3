@@ -37,13 +37,13 @@ void mount(void) {
 		for (int t = 0; t < 6; t++) {
 			fprintf(pFileDump, "%d ", part.inodeTable[i].blocks[t]);
 			freeBlocks[part.inodeTable[i].blocks[t]] = 1;
-			if (part.inodeTable[i].blocks[t] != 0) {
+			if (part.inodeTable[i].blocks[t] != 0) {											//Not Count block[0]
 				numFreeBlocks--;
 			}	
 		}
 		fprintf(pFileDump, "\n-------------------------------------------------------------\n");
 	}
-	if (freeBlocks[0] == 1) {
+	if (freeBlocks[0] == 1) {																	//Add Count block[0]
 		numFreeBlocks--;
 	}
 	part.super.numFreeBlocks = numFreeBlocks;
@@ -52,9 +52,9 @@ void mount(void) {
 }
 
 void unmount(void) {
-	fseek(pFileSystem, 0, SEEK_SET);
-	fwrite(&part.super, sizeof(superBlock), 1, pFileSystem);
-	for (int i = 0; i < 224; i++) {
+	fseek(pFileSystem, 0, SEEK_SET);															//File Pointer Move to start point
+	fwrite(&part.super, sizeof(superBlock), 1, pFileSystem);									//Update superBlock (part<memory> -> img<disk>)
+	for (int i = 0; i < 224; i++) {																//Update inodeTable (part<momory> -> img<disk>)
 		fwrite(&part.inodeTable[i], sizeof(inode), 1, pFileSystem);
 	}
 	printf("File System Unmount\n");
@@ -62,7 +62,7 @@ void unmount(void) {
 }
 
 void printRootDir(void) {
-	int blockNum = part.inodeTable[part.super.firstInode].size / BLOCK_SIZE;							//BLOCK_SIZE = 0x400
+	int blockNum = part.inodeTable[part.super.firstInode].size / BLOCK_SIZE;					//Block number = file size / block size
 	int blockLocation;
 
 	if ((part.inodeTable[part.super.firstInode].size % BLOCK_SIZE) != 0) {
@@ -73,7 +73,7 @@ void printRootDir(void) {
 
 	fprintf(pFileDump, "-------------------------------------------------Root Directory------------------------------------------------\n");
 	for (int i = 0, m = 1; i < blockNum; i++) {
-		blockLocation = (BLOCK_SIZE * part.super.firstDataBlock) + (part.inodeTable[part.super.firstInode].blocks[i] * BLOCK_SIZE);
+		blockLocation = BLOCK_SIZE * (part.super.firstDataBlock + part.inodeTable[part.super.firstInode].blocks[i]);			//Directory Entry = Firstblock(8) + rootdir inode -> block
 		fseek(pFileSystem, blockLocation, SEEK_SET);
 		for (int t = 0; t < BLOCK_SIZE; t = t + 32, m++) {
 			fread(&dirEntry.inode, sizeof(int), 1, pFileSystem);
@@ -81,11 +81,11 @@ void printRootDir(void) {
 			fread(&dirEntry.nameLen, sizeof(int), 1, pFileSystem);
 			fread(&dirEntry.fileType, sizeof(int), 1, pFileSystem);
 			fread(&dirEntry.name, sizeof(char), 16, pFileSystem);
-			if (dirEntry.inode == 0) {								//End -> stop printing
+			if (dirEntry.inode == 0) {																							//End -> stop printing
 				break;
 			}
 			fprintf(pFileDump, "%15s ", dirEntry.name);
-			if (m % 7 == 0) {																		//Every 7 print -> new line
+			if (m % 7 == 0) {																									//Every 7 print -> new line
 				fprintf(pFileDump, "\n");
 			}
 		}
@@ -104,9 +104,9 @@ int fileOpen(char* fileName, int mode) {
 		return 1;
 	}
 
-	permission = part.inodeTable[inodeNum].mode & 0xFFF;
+	permission = part.inodeTable[inodeNum].mode & 0xFFF;																		//mode = File type + Permission(0xFFF)
 	
-	if (mode == 0) {			//mode 0 -> read mode
+	if (mode == 1) {																											//mode 1 -> read mode
 		if (permission == 0x777 || permission == 0x1) {
 			printf("File [%s] Open as Read Mode\n",fileName);
 			return 0;
@@ -116,13 +116,13 @@ int fileOpen(char* fileName, int mode) {
 			return 1;
 		}
 	}
-	else if (mode == 1) {		//mode 1 -> write mode
+	else if (mode == 2) {																										//mode 2 -> write mode
 		if (part.inodeTable[inodeNum].locked == 1) {
 			printf("File [%s] Oped by other processor\n", fileName);
 			return 1;
 		}
 		if (permission == 0x777 || permission == 0x2) {
-			part.inodeTable[inodeNum].locked = 1;		//Update inode Lock condition
+			part.inodeTable[inodeNum].locked = 1;																				//Update inode Lock condition(part<memory>)
 			printf("File [%s] Open as Write Mode\n",fileName);
 			return 0;
 		}
@@ -138,25 +138,23 @@ int fileOpen(char* fileName, int mode) {
 }
 
 int fileClose(char* fileName, int mode) {
-	memset(&dirEntry, 0, sizeof(dentry));
 	int inodeNum = hashFun(fileName);
 	int inodeLocation;
-	inode inodeBuffer;
 
 	if (inodeNum == -1) {
 		printf("There are no file : %s\n", fileName);
 		return 1;
 	}
 
-	if (mode == 2) {
-		part.inodeTable[inodeNum].locked = 0;				//Update inode Lock condition
+	if (mode == 2) {																											//mode 2 -> write mode
+		part.inodeTable[inodeNum].locked = 0;																					//Update inode Lock condition(part<memory>)
 	}
 	printf("File [%s] Close\n", fileName);
 	return 0;
 }
 
 void randFileSelect(char* fileName) {
-	int fileNum = part.inodeTable[part.super.firstInode].size / 32;										//Directroy Entry = 32 bytes
+	int fileNum = part.inodeTable[part.super.firstInode].size / 32;																//Directroy Entry = 32 bytes
 	int randFile;
 	int fileLocation;
 	//int blockNum;
@@ -165,8 +163,8 @@ void randFileSelect(char* fileName) {
 	randFile = rand();
 	srand(getpid() + time(NULL) + randFile);
 	//===============================
-	randFile = (rand() % (fileNum - 2)) + 2;						//1, 2 is ".", ".." file -> skip, only use file_0 ~ 100
-	fileLocation = (BLOCK_SIZE * part.super.firstDataBlock) + (32 * randFile);
+	randFile = (rand() % (fileNum - 2)) + 2;																					//1, 2 is ".", ".." file -> skip, only use file_0 ~ 100 (inode 2~102)
+	fileLocation = (BLOCK_SIZE * part.super.firstDataBlock) + (32 * randFile);													//firstDataBlock(8) -> Block[0], Block[0~3] -> root dir entry
 	fseek(pFileSystem, fileLocation, SEEK_SET);
 	fread(&dirEntry.inode, sizeof(int), 1, pFileSystem);
 	fread(&dirEntry.dirLength, sizeof(int), 1, pFileSystem);
@@ -182,42 +180,41 @@ int fileWrite(PCB* fileDescriptor, char* bufferPointer) {
 	int bufferBlock;
 	int blockLocation;
 
-	bufferBlock = (strlen(bufferPointer) / BLOCK_SIZE) + 1;
-	part.inodeTable[inodeNum].size = (strlen(bufferPointer) + 1);
+	bufferBlock = (strlen(bufferPointer) / BLOCK_SIZE) + 1;																		//Write Data blocks = Write Data size / Block size
+	part.inodeTable[inodeNum].size = (strlen(bufferPointer) + 1);																//Write Data Size Update (part<memory>)
 
 	if (inodeNum == -1) {
 		printf("There are no file : %s\n", fileDescriptor->openFile.fileName);
 		return 1;
 	}
-	blockLocation == BLOCK_SIZE * (part.super.firstDataBlock + part.inodeTable[inodeNum].blocks[0]);
-	fseek(pFileSystem, blockLocation, SEEK_SET);
 
-	strcpy(writeBuffer, bufferPointer);
-	fwrite(writeBuffer, sizeof(blocks), 1, pFileSystem);
-
-	//for (int i = 0; i < bufferBlock; i++) {
-	//	blockLocation == BLOCK_SIZE * (part.super.firstDataBlock + part.inodeTable[inodeNum].blocks[i]);
-	//	fseek(pFileSystem, blockLocation, SEEK_SET);
-	//	bufferPointer += BLOCK_SIZE * i;			//String Pointer Move 1024 * block bytes
-	//	strcpy(writeBuffer, bufferPointer);
-	//	fwrite(writeBuffer, sizeof(blocks), 1, pFileSystem);
-	//}
+	for (int i = 0; i < bufferBlock; i++) {
+		blockLocation = BLOCK_SIZE * (part.super.firstDataBlock + part.inodeTable[inodeNum].blocks[i]);
+		fseek(pFileSystem, blockLocation, SEEK_SET);
+		bufferPointer += BLOCK_SIZE * i;																						//String Pointer Move 1024 * block bytes
+		strcpy(writeBuffer, bufferPointer);
+		fwrite(writeBuffer, sizeof(blocks), 1, pFileSystem);
+	}
 	printf("Data [%s] write to File [%s] success\n", writeBuffer, fileDescriptor->openFile.fileName);
 	return 0;
 }
 
 int fileRead(PCB* fileDescriptor, char* bufferPointer, int readDataSize) {
 	int inodeNum = hashFun(fileDescriptor->openFile.fileName);
-	int offSetBlock = fileDescriptor->openFile.offSet / BLOCK_SIZE;
-	int offSet = fileDescriptor->openFile.offSet % BLOCK_SIZE;
-	int blockLocation = BLOCK_SIZE * (part.super.firstDataBlock + part.inodeTable[inodeNum].blocks[offSetBlock]);
+	int offSetBlock = fileDescriptor->openFile.offSet / BLOCK_SIZE;																//offSet block = Last Read Point Block
+	int offSet = fileDescriptor->openFile.offSet % BLOCK_SIZE;																	//offSet = Last Read Point
+	int blockLocation = BLOCK_SIZE * (part.super.firstDataBlock + part.inodeTable[inodeNum].blocks[offSetBlock]);				//file Block location = First Data Block(8) + file inode.blocks[offSet block] * 1024bytes
 	int readByte;
 
 	fseek(pFileSystem, blockLocation + offSet, SEEK_SET);
-	readByte = fread(bufferPointer, sizeof(char), readDataSize, pFileSystem);
-	fileDescriptor->openFile.offSet += readByte;
-	bufferPointer[readDataSize] = '\0';
-
+	fgets(bufferPointer, readDataSize, pFileSystem);
+	readByte = strlen(bufferPointer);
+	for (int i = 0; i < readByte; i++) {																						//\n scan
+		if (bufferPointer[i] == '\n') {																							//change \n -> \t for print format
+			bufferPointer[i] = '\t';
+		}
+	}
+	fileDescriptor->openFile.offSet += readByte;																				//offSet Update
 	return readByte;
 }
 
@@ -229,11 +226,11 @@ int hashFun(char* fileName) {
 	
 	strcpy(buffer, fileName);
 
-	fNameBuffer = strtok(buffer, " file_");
+	fNameBuffer = strtok(buffer, " file_");																						//buffer(file_num), fNamebuffer point "num"
 	if (fNameBuffer == NULL) {
 		printf("Hash Error\n");
-		return -1;					//No hash -> No File
+		return -1;																												//No hash -> No File
 	}
-	fNumBuffer = atoi(fNameBuffer);
-	return fNumBuffer + 2;			//return inode number
+	fNumBuffer = atoi(fNameBuffer);																								//"num"<string> -> num<int>
+	return fNumBuffer + 2;																										//return inode number
 }

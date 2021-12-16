@@ -1,12 +1,16 @@
 #include "fs.h"
 
 void signalTimeTick(int signo) {								//SIGALRM
+	char userBuffer[1024];
+	int openMode;
+	int procNum;
+
 	if (RUN_TIME == 0) {
 		return;
 	}
 
 	CONST_TICK_COUNT++;
-	printf("%05d       PROC NUMBER   REMAINED CPU TIME\n", CONST_TICK_COUNT);
+	printf("TICK %05d\n", CONST_TICK_COUNT);
 
 	// io burst part.
 	PCB* PCBPtr = waitQueue->head;
@@ -17,10 +21,46 @@ void signalTimeTick(int signo) {								//SIGALRM
 		PCBPtr = PCBPtr->next;
 		waitQueueSize++;
 	}
+	if (waitQueueSize == 0) {
+		printf("No File Request\n");
+	}
 
 	for (int i = 0; i < waitQueueSize; i++) {
 		popPCB(waitQueue, ioRunPCB);
-		ioRunPCB->ioTime--;			// decrease io time by 1.
+		ioRunPCB->ioTime--;													// decrease io time by 1.
+		procNum = ioRunPCB->procNum;
+		printf("Proc[%02d] : ", procNum);
+
+		if (ioRunPCB->openFile.fileCond == 0) {								//File not opened
+			openMode = rand();
+			srand(time(NULL) + openMode);
+			openMode = (rand() % 2) + 1;									//openMode 1 -> read, openMode 2 -> write
+			randFileSelect(ioRunPCB->openFile.fileName);					//Random File select
+			if (fileOpen(ioRunPCB->openFile.fileName, openMode) == 0) {		//file oepn success
+				ioRunPCB->openFile.fileCond = openMode;						//PCB File Condition Update
+			}
+			else {															//file open fail
+
+			}
+		}
+		else if (ioRunPCB->openFile.fileCond == 1) {						//File already opened read mode
+			if (fileRead(ioRunPCB, userBuffer, 11) < 10) {					//Read All File
+				printf("File Read [%s]\n", userBuffer);
+				printf("           ");
+				ioRunPCB->openFile.offSet = 0;								//PCB offSet reset
+				fileClose(ioRunPCB->openFile.fileName, ioRunPCB->openFile.fileCond);
+				ioRunPCB->openFile.fileCond = 0;							//PCB File Condition reset
+			}
+			else {
+				printf("File Read [%s]\n", userBuffer);
+			}
+		}
+		else if (ioRunPCB->openFile.fileCond == 2) {						//File  already opend write mode
+			fileWrite(ioRunPCB, "filechange");
+			printf("           ");
+			fileClose(ioRunPCB->openFile.fileName, ioRunPCB->openFile.fileCond);
+			ioRunPCB->openFile.fileCond = 0;								//PCB File Condition reset
+		}
 
 		// io task is over, then push node to ready queue.
 		if (ioRunPCB->ioTime == 0) {
@@ -31,6 +71,7 @@ void signalTimeTick(int signo) {								//SIGALRM
 			pushPCB(waitQueue, ioRunPCB->procNum, ioRunPCB->cpuTime, ioRunPCB->ioTime, ioRunPCB->openFile);
 		}
 	}
+	printf("--------------------------------------------\n");
 	// cpu burst part.
 	if (cpuRunPCB->procNum != -1) {
 		kill(CPID[cpuRunPCB->procNum], SIGCONT);
@@ -42,36 +83,6 @@ void signalTimeTick(int signo) {								//SIGALRM
 
 void signalRRcpuSchedOut(int signo) {							//SIGUSR1
 	TICK_COUNT++;
-	char userBuffer[1024];
-	int openMode;
-
-	if (cpuRunPCB->openFile.fileCond == 0) {								//file not opened
-		openMode = rand();
-		srand(time(NULL) + openMode);
-		openMode = rand() % 2;												//openMode 0 -> read, openMode 1 -> write
-		//printf("%s\n", &cpuRunPCB->fileName);
-		if (fileOpen(cpuRunPCB->openFile.fileName, openMode) == 0) {		//file oepn success
-			cpuRunPCB->openFile.fileCond = openMode + 1;
-		}
-		else {																//file open fail
-
-		}
-	}
-
-	if (cpuRunPCB->openFile.fileCond == 1) {								//file already opened
-		if (fileRead(cpuRunPCB, userBuffer, 10) < 11) {
-			fileClose(cpuRunPCB->openFile.fileName, cpuRunPCB->openFile.fileCond);
-			cpuRunPCB->openFile.fileCond = 0;
-		}
-		printf("%s\n",userBuffer);
-	}
-	else if (cpuRunPCB->openFile.fileCond == 2) {
-		//fileWrite(cpuRunPCB, "write buffer");
-		//fileClose(cpuRunPCB->openFile.fileName, cpuRunPCB->openFile.fileCond);
-		//cpuRunPCB->openFile.fileCond = 0;
-	}
-
-	printf("--------------------------------------------\n");
 
 	// scheduler changes cpu preemptive process at every time quantum.
 	if (TICK_COUNT >= TIME_QUANTUM) {
@@ -85,8 +96,6 @@ void signalRRcpuSchedOut(int signo) {							//SIGUSR1
 }
 
 void signalIoSchedIn(int signo) {								//SIGUSR2
-	printf("--------------------------------------------\n");
-
 	pMsgRcvIocpu(cpuRunPCB->procNum, cpuRunPCB);
 
 	// process that has no io task go to the end of the ready queue.
@@ -180,7 +189,7 @@ void deletePCB(PCBList* list) {
 	}
 }
 
-void cMsgSndIocpu(int procNum, int cpuBurstTime, int ioBurstTime, char* randFile) {
+void cMsgSndIocpu(int procNum, int cpuBurstTime, int ioBurstTime) {
 	int key = 0x3216 * (procNum + 1);
 	int qid = msgget(key, IPC_CREAT | 0666);				// create message queue ID.
 
@@ -191,7 +200,6 @@ void cMsgSndIocpu(int procNum, int cpuBurstTime, int ioBurstTime, char* randFile
 	msg.mData.pid = getpid();
 	msg.mData.cpuTime = cpuBurstTime;						// child process cpu burst time.
 	msg.mData.ioTime = ioBurstTime;							// child process io burst time.
-	strcpy(msg.mData.fileName, randFile);					// child process file request.
 
 	// child process sends its data to parent process.
 	if (msgsnd(qid, (void*)&msg, sizeof(dataIocpu), 0) == -1) {
@@ -218,6 +226,5 @@ void pMsgRcvIocpu(int procNum, PCB* PCBPtr) {
 	PCBPtr->pid = msg.mData.pid;
 	PCBPtr->cpuTime = msg.mData.cpuTime;
 	PCBPtr->ioTime = msg.mData.ioTime;
-	strcpy(PCBPtr->openFile.fileName, msg.mData.fileName);
 	return;
 }
