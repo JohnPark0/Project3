@@ -1,4 +1,4 @@
----------------------SuperBlcok Contents---------------------
+---------------------SuperBlock Contents---------------------
   Partition Type   - 4369
   Block Size       - 1024 bytes
   Inode Size       - 32 bytes
@@ -7,7 +7,7 @@
   num Inode Blocks - 7
   num Free Inodes  - 121
   num Blocks       - 4088
-  num Free Blocks  - 4088
+  num Free Blocks  - 3984
   First Data Block - 8
   Volume Name      - Simple_partition_volume
 -------------------------------------------------------------
@@ -77,9 +77,9 @@
 -------------------------------------------------------------
 ---------------------Inode[  8] Contents---------------------
   Mode           - 67447
-  Locked         - 0
+  Locked         - 1
   Date           - 0
-  File Size      - 37 bytes
+  File Size      - 11 bytes
   Indirect Blcok - -1
   Blocks - 9 0 0 0 0 0 
 -------------------------------------------------------------
@@ -167,7 +167,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 41 bytes
+  File Size      - 11 bytes
   Indirect Blcok - -1
   Blocks - 20 0 0 0 0 0 
 -------------------------------------------------------------
@@ -175,7 +175,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 36 bytes
+  File Size      - 11 bytes
   Indirect Blcok - -1
   Blocks - 21 0 0 0 0 0 
 -------------------------------------------------------------
@@ -247,7 +247,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 40 bytes
+  File Size      - 11 bytes
   Indirect Blcok - -1
   Blocks - 30 0 0 0 0 0 
 -------------------------------------------------------------
@@ -287,7 +287,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 39 bytes
+  File Size      - 11 bytes
   Indirect Blcok - -1
   Blocks - 35 0 0 0 0 0 
 -------------------------------------------------------------
@@ -327,7 +327,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 38 bytes
+  File Size      - 11 bytes
   Indirect Blcok - -1
   Blocks - 40 0 0 0 0 0 
 -------------------------------------------------------------
@@ -335,7 +335,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 40 bytes
+  File Size      - 11 bytes
   Indirect Blcok - -1
   Blocks - 41 0 0 0 0 0 
 -------------------------------------------------------------
@@ -431,7 +431,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 41 bytes
+  File Size      - 11 bytes
   Indirect Blcok - -1
   Blocks - 53 0 0 0 0 0 
 -------------------------------------------------------------
@@ -439,7 +439,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 38 bytes
+  File Size      - 11 bytes
   Indirect Blcok - -1
   Blocks - 54 0 0 0 0 0 
 -------------------------------------------------------------
@@ -535,7 +535,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 41 bytes
+  File Size      - 11 bytes
   Indirect Blcok - -1
   Blocks - 66 0 0 0 0 0 
 -------------------------------------------------------------
@@ -549,9 +549,9 @@
 -------------------------------------------------------------
 ---------------------Inode[ 67] Contents---------------------
   Mode           - 67447
-  Locked         - 0
+  Locked         - 1
   Date           - 0
-  File Size      - 38 bytes
+  File Size      - 11 bytes
   Indirect Blcok - -1
   Blocks - 68 0 0 0 0 0 
 -------------------------------------------------------------
@@ -663,7 +663,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 38 bytes
+  File Size      - 11 bytes
   Indirect Blcok - -1
   Blocks - 82 0 0 0 0 0 
 -------------------------------------------------------------
@@ -701,9 +701,9 @@
 -------------------------------------------------------------
 ---------------------Inode[ 86] Contents---------------------
   Mode           - 67447
-  Locked         - 0
+  Locked         - 1
   Date           - 0
-  File Size      - 41 bytes
+  File Size      - 11 bytes
   Indirect Blcok - -1
   Blocks - 87 0 0 0 0 0 
 -------------------------------------------------------------
@@ -775,7 +775,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 40 bytes
+  File Size      - 11 bytes
   Indirect Blcok - -1
   Blocks - 96 0 0 0 0 0 
 -------------------------------------------------------------

@@ -71,7 +71,7 @@ void signalTimeTick(int signo) {								//SIGALRM
 			pushPCB(waitQueue, ioRunPCB->procNum, ioRunPCB->cpuTime, ioRunPCB->ioTime, ioRunPCB->openFile);
 		}
 	}
-	printf("--------------------------------------------\n");
+	printf("--------------------------------------------------------------\n");
 	// cpu burst part.
 	if (cpuRunPCB->procNum != -1) {
 		kill(CPID[cpuRunPCB->procNum], SIGCONT);
