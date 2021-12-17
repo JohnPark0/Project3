@@ -10,7 +10,7 @@ void mount(void) {
 	}
 
 	fread(&part.super, sizeof(superBlock), 1, pFileSystem);										//copy sizeof(superBlock) bytes to buffer<part.super>
-	fprintf(pFileDump, "---------------------SuperBlcok Contents---------------------\n");
+	fprintf(pFileDump, "---------------------SuperBlock Contents---------------------\n");
 	fprintf(pFileDump, "  Partition Type   - %d\n", part.super.partitionType);
 	fprintf(pFileDump, "  Block Size       - %d bytes\n", part.super.blockSize);
 	fprintf(pFileDump, "  Inode Size       - %d bytes\n", part.super.inodeSize);
@@ -39,12 +39,14 @@ void mount(void) {
 			freeBlocks[part.inodeTable[i].blocks[t]] = 1;
 			if (part.inodeTable[i].blocks[t] != 0) {											//Not Count block[0]
 				numFreeBlocks--;
+				freeBlocks[part.inodeTable[i].blocks[t]] = 1;
 			}	
 		}
 		fprintf(pFileDump, "\n-------------------------------------------------------------\n");
 	}
 	if (freeBlocks[0] == 1) {																	//Add Count block[0]
 		numFreeBlocks--;
+		freeBlocks[0] = 1;
 	}
 	part.super.numFreeBlocks = numFreeBlocks;
 	
@@ -118,7 +120,7 @@ int fileOpen(char* fileName, int mode) {
 	}
 	else if (mode == 2) {																										//mode 2 -> write mode
 		if (part.inodeTable[inodeNum].locked == 1) {
-			printf("File [%s] Oped by other processor\n", fileName);
+			printf("File [%s] Open by other processor\n", fileName);
 			return 1;
 		}
 		if (permission == 0x777 || permission == 0x2) {
@@ -189,6 +191,9 @@ int fileWrite(PCB* fileDescriptor, char* bufferPointer) {
 	}
 
 	for (int i = 0; i < bufferBlock; i++) {
+		if (part.inodeTable[inodeNum].blocks[i] == 0) {
+			part.inodeTable[inodeNum].blocks[i] = findFreeBlock();
+		}
 		blockLocation = BLOCK_SIZE * (part.super.firstDataBlock + part.inodeTable[inodeNum].blocks[i]);
 		fseek(pFileSystem, blockLocation, SEEK_SET);
 		bufferPointer += BLOCK_SIZE * i;																						//String Pointer Move 1024 * block bytes
@@ -233,4 +238,14 @@ int hashFun(char* fileName) {
 	}
 	fNumBuffer = atoi(fNameBuffer);																								//"num"<string> -> num<int>
 	return fNumBuffer + 2;																										//return inode number
+}
+
+int findFreeBlock(void) {
+	int free;
+	for (int i = 0; i < 4088; i++) {
+		if (freeBlocks[i] == 0) {
+			free = i;
+			return i;
+		}
+	}
 }

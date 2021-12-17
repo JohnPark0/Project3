@@ -7,7 +7,7 @@
   num Inode Blocks - 7
   num Free Inodes  - 121
   num Blocks       - 4088
-  num Free Blocks  - 3984
+  num Free Blocks  - 4088
   First Data Block - 8
   Volume Name      - Simple_partition_volume
 -------------------------------------------------------------
@@ -39,7 +39,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 37 bytes
   Indirect Blcok - -1
   Blocks - 4 0 0 0 0 0 
 -------------------------------------------------------------
@@ -47,7 +47,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 40 bytes
   Indirect Blcok - -1
   Blocks - 5 0 0 0 0 0 
 -------------------------------------------------------------
@@ -55,7 +55,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 40 bytes
   Indirect Blcok - -1
   Blocks - 6 0 0 0 0 0 
 -------------------------------------------------------------
@@ -63,13 +63,13 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 38 bytes
   Indirect Blcok - -1
   Blocks - 7 0 0 0 0 0 
 -------------------------------------------------------------
 ---------------------Inode[  7] Contents---------------------
   Mode           - 67447
-  Locked         - 1
+  Locked         - 0
   Date           - 0
   File Size      - 39 bytes
   Indirect Blcok - -1
@@ -79,7 +79,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 37 bytes
   Indirect Blcok - -1
   Blocks - 9 0 0 0 0 0 
 -------------------------------------------------------------
@@ -95,23 +95,23 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 39 bytes
   Indirect Blcok - -1
   Blocks - 11 0 0 0 0 0 
 -------------------------------------------------------------
 ---------------------Inode[ 11] Contents---------------------
   Mode           - 67447
-  Locked         - 1
+  Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 38 bytes
   Indirect Blcok - -1
   Blocks - 12 0 0 0 0 0 
 -------------------------------------------------------------
 ---------------------Inode[ 12] Contents---------------------
   Mode           - 67447
-  Locked         - 1
+  Locked         - 0
   Date           - 0
-  File Size      - 13 bytes
+  File Size      - 40 bytes
   Indirect Blcok - -1
   Blocks - 13 0 0 0 0 0 
 -------------------------------------------------------------
@@ -119,7 +119,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 40 bytes
   Indirect Blcok - -1
   Blocks - 14 0 0 0 0 0 
 -------------------------------------------------------------
@@ -127,7 +127,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 40 bytes
   Indirect Blcok - -1
   Blocks - 15 0 0 0 0 0 
 -------------------------------------------------------------
@@ -135,7 +135,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 40 bytes
   Indirect Blcok - -1
   Blocks - 16 0 0 0 0 0 
 -------------------------------------------------------------
@@ -143,7 +143,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 39 bytes
   Indirect Blcok - -1
   Blocks - 17 0 0 0 0 0 
 -------------------------------------------------------------
@@ -151,7 +151,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 40 bytes
   Indirect Blcok - -1
   Blocks - 18 0 0 0 0 0 
 -------------------------------------------------------------
@@ -159,15 +159,15 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 38 bytes
   Indirect Blcok - -1
   Blocks - 19 0 0 0 0 0 
 -------------------------------------------------------------
 ---------------------Inode[ 19] Contents---------------------
   Mode           - 67447
-  Locked         - 1
+  Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 41 bytes
   Indirect Blcok - -1
   Blocks - 20 0 0 0 0 0 
 -------------------------------------------------------------
@@ -175,7 +175,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 36 bytes
   Indirect Blcok - -1
   Blocks - 21 0 0 0 0 0 
 -------------------------------------------------------------
@@ -183,15 +183,15 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 40 bytes
   Indirect Blcok - -1
   Blocks - 22 0 0 0 0 0 
 -------------------------------------------------------------
 ---------------------Inode[ 22] Contents---------------------
   Mode           - 67447
-  Locked         - 1
+  Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 41 bytes
   Indirect Blcok - -1
   Blocks - 23 0 0 0 0 0 
 -------------------------------------------------------------
@@ -199,7 +199,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 40 bytes
   Indirect Blcok - -1
   Blocks - 24 0 0 0 0 0 
 -------------------------------------------------------------
@@ -207,7 +207,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 38 bytes
   Indirect Blcok - -1
   Blocks - 25 0 0 0 0 0 
 -------------------------------------------------------------
@@ -215,7 +215,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 39 bytes
   Indirect Blcok - -1
   Blocks - 26 0 0 0 0 0 
 -------------------------------------------------------------
@@ -223,7 +223,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 38 bytes
   Indirect Blcok - -1
   Blocks - 27 0 0 0 0 0 
 -------------------------------------------------------------
@@ -231,7 +231,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 41 bytes
   Indirect Blcok - -1
   Blocks - 28 0 0 0 0 0 
 -------------------------------------------------------------
@@ -239,7 +239,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 37 bytes
   Indirect Blcok - -1
   Blocks - 29 0 0 0 0 0 
 -------------------------------------------------------------
@@ -247,7 +247,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 40 bytes
   Indirect Blcok - -1
   Blocks - 30 0 0 0 0 0 
 -------------------------------------------------------------
@@ -255,7 +255,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 39 bytes
   Indirect Blcok - -1
   Blocks - 31 0 0 0 0 0 
 -------------------------------------------------------------
@@ -263,7 +263,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 40 bytes
   Indirect Blcok - -1
   Blocks - 32 0 0 0 0 0 
 -------------------------------------------------------------
@@ -271,7 +271,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 41 bytes
   Indirect Blcok - -1
   Blocks - 33 0 0 0 0 0 
 -------------------------------------------------------------
@@ -279,7 +279,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 39 bytes
   Indirect Blcok - -1
   Blocks - 34 0 0 0 0 0 
 -------------------------------------------------------------
@@ -287,7 +287,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 39 bytes
   Indirect Blcok - -1
   Blocks - 35 0 0 0 0 0 
 -------------------------------------------------------------
@@ -295,13 +295,13 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 40 bytes
   Indirect Blcok - -1
   Blocks - 36 0 0 0 0 0 
 -------------------------------------------------------------
 ---------------------Inode[ 36] Contents---------------------
   Mode           - 67447
-  Locked         - 1
+  Locked         - 0
   Date           - 0
   File Size      - 38 bytes
   Indirect Blcok - -1
@@ -311,7 +311,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 39 bytes
   Indirect Blcok - -1
   Blocks - 38 0 0 0 0 0 
 -------------------------------------------------------------
@@ -319,7 +319,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 37 bytes
   Indirect Blcok - -1
   Blocks - 39 0 0 0 0 0 
 -------------------------------------------------------------
@@ -327,13 +327,13 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 38 bytes
   Indirect Blcok - -1
   Blocks - 40 0 0 0 0 0 
 -------------------------------------------------------------
 ---------------------Inode[ 40] Contents---------------------
   Mode           - 67447
-  Locked         - 1
+  Locked         - 0
   Date           - 0
   File Size      - 40 bytes
   Indirect Blcok - -1
@@ -343,7 +343,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 41 bytes
   Indirect Blcok - -1
   Blocks - 42 0 0 0 0 0 
 -------------------------------------------------------------
@@ -351,7 +351,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 40 bytes
   Indirect Blcok - -1
   Blocks - 43 0 0 0 0 0 
 -------------------------------------------------------------
@@ -359,7 +359,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 39 bytes
   Indirect Blcok - -1
   Blocks - 44 0 0 0 0 0 
 -------------------------------------------------------------
@@ -367,7 +367,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 40 bytes
   Indirect Blcok - -1
   Blocks - 45 0 0 0 0 0 
 -------------------------------------------------------------
@@ -375,7 +375,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 39 bytes
   Indirect Blcok - -1
   Blocks - 46 0 0 0 0 0 
 -------------------------------------------------------------
@@ -383,7 +383,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 40 bytes
   Indirect Blcok - -1
   Blocks - 47 0 0 0 0 0 
 -------------------------------------------------------------
@@ -391,7 +391,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 40 bytes
   Indirect Blcok - -1
   Blocks - 48 0 0 0 0 0 
 -------------------------------------------------------------
@@ -399,7 +399,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 41 bytes
   Indirect Blcok - -1
   Blocks - 49 0 0 0 0 0 
 -------------------------------------------------------------
@@ -407,7 +407,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 38 bytes
   Indirect Blcok - -1
   Blocks - 50 0 0 0 0 0 
 -------------------------------------------------------------
@@ -415,7 +415,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 40 bytes
   Indirect Blcok - -1
   Blocks - 51 0 0 0 0 0 
 -------------------------------------------------------------
@@ -439,7 +439,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 38 bytes
   Indirect Blcok - -1
   Blocks - 54 0 0 0 0 0 
 -------------------------------------------------------------
@@ -447,7 +447,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 40 bytes
   Indirect Blcok - -1
   Blocks - 55 0 0 0 0 0 
 -------------------------------------------------------------
@@ -455,7 +455,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 39 bytes
   Indirect Blcok - -1
   Blocks - 56 0 0 0 0 0 
 -------------------------------------------------------------
@@ -463,7 +463,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 39 bytes
   Indirect Blcok - -1
   Blocks - 57 0 0 0 0 0 
 -------------------------------------------------------------
@@ -471,7 +471,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 39 bytes
   Indirect Blcok - -1
   Blocks - 58 0 0 0 0 0 
 -------------------------------------------------------------
@@ -479,7 +479,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 41 bytes
   Indirect Blcok - -1
   Blocks - 59 0 0 0 0 0 
 -------------------------------------------------------------
@@ -487,23 +487,23 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 39 bytes
   Indirect Blcok - -1
   Blocks - 60 0 0 0 0 0 
 -------------------------------------------------------------
 ---------------------Inode[ 60] Contents---------------------
   Mode           - 67447
-  Locked         - 1
+  Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 38 bytes
   Indirect Blcok - -1
   Blocks - 61 0 0 0 0 0 
 -------------------------------------------------------------
 ---------------------Inode[ 61] Contents---------------------
   Mode           - 67447
-  Locked         - 1
+  Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 40 bytes
   Indirect Blcok - -1
   Blocks - 62 0 0 0 0 0 
 -------------------------------------------------------------
@@ -511,7 +511,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 39 bytes
   Indirect Blcok - -1
   Blocks - 63 0 0 0 0 0 
 -------------------------------------------------------------
@@ -519,15 +519,15 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 41 bytes
   Indirect Blcok - -1
   Blocks - 64 0 0 0 0 0 
 -------------------------------------------------------------
 ---------------------Inode[ 64] Contents---------------------
   Mode           - 67447
-  Locked         - 1
+  Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 41 bytes
   Indirect Blcok - -1
   Blocks - 65 0 0 0 0 0 
 -------------------------------------------------------------
@@ -535,7 +535,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 41 bytes
   Indirect Blcok - -1
   Blocks - 66 0 0 0 0 0 
 -------------------------------------------------------------
@@ -543,7 +543,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 40 bytes
   Indirect Blcok - -1
   Blocks - 67 0 0 0 0 0 
 -------------------------------------------------------------
@@ -559,15 +559,15 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 40 bytes
   Indirect Blcok - -1
   Blocks - 69 0 0 0 0 0 
 -------------------------------------------------------------
 ---------------------Inode[ 69] Contents---------------------
   Mode           - 67447
-  Locked         - 1
+  Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 39 bytes
   Indirect Blcok - -1
   Blocks - 70 0 0 0 0 0 
 -------------------------------------------------------------
@@ -575,7 +575,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 40 bytes
   Indirect Blcok - -1
   Blocks - 71 0 0 0 0 0 
 -------------------------------------------------------------
@@ -583,7 +583,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 38 bytes
   Indirect Blcok - -1
   Blocks - 72 0 0 0 0 0 
 -------------------------------------------------------------
@@ -591,7 +591,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 40 bytes
   Indirect Blcok - -1
   Blocks - 73 0 0 0 0 0 
 -------------------------------------------------------------
@@ -599,13 +599,13 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 39 bytes
   Indirect Blcok - -1
   Blocks - 74 0 0 0 0 0 
 -------------------------------------------------------------
 ---------------------Inode[ 74] Contents---------------------
   Mode           - 67447
-  Locked         - 1
+  Locked         - 0
   Date           - 0
   File Size      - 40 bytes
   Indirect Blcok - -1
@@ -615,15 +615,15 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 40 bytes
   Indirect Blcok - -1
   Blocks - 76 0 0 0 0 0 
 -------------------------------------------------------------
 ---------------------Inode[ 76] Contents---------------------
   Mode           - 67447
-  Locked         - 1
+  Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 40 bytes
   Indirect Blcok - -1
   Blocks - 77 0 0 0 0 0 
 -------------------------------------------------------------
@@ -631,7 +631,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 41 bytes
   Indirect Blcok - -1
   Blocks - 78 0 0 0 0 0 
 -------------------------------------------------------------
@@ -639,7 +639,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 40 bytes
   Indirect Blcok - -1
   Blocks - 79 0 0 0 0 0 
 -------------------------------------------------------------
@@ -647,7 +647,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 40 bytes
   Indirect Blcok - -1
   Blocks - 80 0 0 0 0 0 
 -------------------------------------------------------------
@@ -655,7 +655,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 39 bytes
   Indirect Blcok - -1
   Blocks - 81 0 0 0 0 0 
 -------------------------------------------------------------
@@ -663,7 +663,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 38 bytes
   Indirect Blcok - -1
   Blocks - 82 0 0 0 0 0 
 -------------------------------------------------------------
@@ -679,7 +679,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 39 bytes
   Indirect Blcok - -1
   Blocks - 84 0 0 0 0 0 
 -------------------------------------------------------------
@@ -687,7 +687,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 41 bytes
   Indirect Blcok - -1
   Blocks - 85 0 0 0 0 0 
 -------------------------------------------------------------
@@ -695,7 +695,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 39 bytes
   Indirect Blcok - -1
   Blocks - 86 0 0 0 0 0 
 -------------------------------------------------------------
@@ -703,7 +703,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 41 bytes
   Indirect Blcok - -1
   Blocks - 87 0 0 0 0 0 
 -------------------------------------------------------------
@@ -711,7 +711,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 39 bytes
   Indirect Blcok - -1
   Blocks - 88 0 0 0 0 0 
 -------------------------------------------------------------
@@ -719,7 +719,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 38 bytes
   Indirect Blcok - -1
   Blocks - 89 0 0 0 0 0 
 -------------------------------------------------------------
@@ -727,15 +727,15 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 41 bytes
   Indirect Blcok - -1
   Blocks - 90 0 0 0 0 0 
 -------------------------------------------------------------
 ---------------------Inode[ 90] Contents---------------------
   Mode           - 67447
-  Locked         - 1
+  Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 40 bytes
   Indirect Blcok - -1
   Blocks - 91 0 0 0 0 0 
 -------------------------------------------------------------
@@ -743,7 +743,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 40 bytes
   Indirect Blcok - -1
   Blocks - 92 0 0 0 0 0 
 -------------------------------------------------------------
@@ -751,7 +751,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 40 bytes
   Indirect Blcok - -1
   Blocks - 93 0 0 0 0 0 
 -------------------------------------------------------------
@@ -759,15 +759,15 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 40 bytes
   Indirect Blcok - -1
   Blocks - 94 0 0 0 0 0 
 -------------------------------------------------------------
 ---------------------Inode[ 94] Contents---------------------
   Mode           - 67447
-  Locked         - 1
+  Locked         - 0
   Date           - 0
-  File Size      - 13 bytes
+  File Size      - 39 bytes
   Indirect Blcok - -1
   Blocks - 95 0 0 0 0 0 
 -------------------------------------------------------------
@@ -775,7 +775,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 40 bytes
   Indirect Blcok - -1
   Blocks - 96 0 0 0 0 0 
 -------------------------------------------------------------
@@ -783,7 +783,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 38 bytes
   Indirect Blcok - -1
   Blocks - 97 0 0 0 0 0 
 -------------------------------------------------------------
@@ -791,7 +791,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 37 bytes
   Indirect Blcok - -1
   Blocks - 98 0 0 0 0 0 
 -------------------------------------------------------------
@@ -799,7 +799,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 38 bytes
   Indirect Blcok - -1
   Blocks - 99 0 0 0 0 0 
 -------------------------------------------------------------
@@ -807,7 +807,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 39 bytes
   Indirect Blcok - -1
   Blocks - 100 0 0 0 0 0 
 -------------------------------------------------------------
@@ -815,7 +815,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 39 bytes
   Indirect Blcok - -1
   Blocks - 101 0 0 0 0 0 
 -------------------------------------------------------------
@@ -823,7 +823,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 38 bytes
   Indirect Blcok - -1
   Blocks - 102 0 0 0 0 0 
 -------------------------------------------------------------
@@ -831,7 +831,7 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 11 bytes
+  File Size      - 42 bytes
   Indirect Blcok - -1
   Blocks - 103 0 0 0 0 0 
 -------------------------------------------------------------
