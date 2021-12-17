@@ -32,21 +32,19 @@ void mount(void) {
 		fprintf(pFileDump, "  Locked         - %d\n", part.inodeTable[i].locked);
 		fprintf(pFileDump, "  Date           - %d\n", part.inodeTable[i].date);
 		fprintf(pFileDump, "  File Size      - %d bytes\n", part.inodeTable[i].size);
-		fprintf(pFileDump, "  Indirect Blcok - %d\n", part.inodeTable[i].indirectBlock);
+		fprintf(pFileDump, "  Indirect Block - %d\n", part.inodeTable[i].indirectBlock);
 		fprintf(pFileDump, "  Blocks - ");
 		for (int t = 0; t < 6; t++) {
 			fprintf(pFileDump, "%d ", part.inodeTable[i].blocks[t]);
 			freeBlocks[part.inodeTable[i].blocks[t]] = 1;
 			if (part.inodeTable[i].blocks[t] != 0) {											//Not Count block[0]
 				numFreeBlocks--;
-				freeBlocks[part.inodeTable[i].blocks[t]] = 1;
 			}	
 		}
 		fprintf(pFileDump, "\n-------------------------------------------------------------\n");
 	}
 	if (freeBlocks[0] == 1) {																	//Add Count block[0]
 		numFreeBlocks--;
-		freeBlocks[0] = 1;
 	}
 	part.super.numFreeBlocks = numFreeBlocks;
 	
@@ -95,6 +93,16 @@ void printRootDir(void) {
 	fprintf(pFileDump, "\n---------------------------------------------------------------------------------------------------------------\n");
 
 	fclose(pFileDump);
+}
+
+int findFreeBlock(void) {
+	int free;
+	for (int i = 0; i < 4088; i++) {
+		if (freeBlocks[i] == 0) {
+			free = i;
+			return free;
+		}
+	}
 }
 
 int fileOpen(char* fileName, int mode) {
@@ -231,7 +239,7 @@ int hashFun(char* fileName) {
 	
 	strcpy(buffer, fileName);
 
-	fNameBuffer = strtok(buffer, " file_");																						//buffer(file_num), fNamebuffer point "num"
+	fNameBuffer = strtok(buffer, "file_");																						//buffer(file_num), fNamebuffer point "num"
 	if (fNameBuffer == NULL) {
 		printf("Hash Error\n");
 		return -1;																												//No hash -> No File
@@ -240,12 +248,3 @@ int hashFun(char* fileName) {
 	return fNumBuffer + 2;																										//return inode number
 }
 
-int findFreeBlock(void) {
-	int free;
-	for (int i = 0; i < 4088; i++) {
-		if (freeBlocks[i] == 0) {
-			free = i;
-			return i;
-		}
-	}
-}
