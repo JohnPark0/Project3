@@ -10,7 +10,6 @@ FILE* pMakeFile;
 int freeInode[224];
 int numFreeInode;
 
-
 int main(void) {
 	int menuSelect;
 	pMakeFile = fopen("disk.img", "w");
@@ -19,17 +18,16 @@ int main(void) {
 	memset(freeInode, 0, sizeof(freeInode));
 	numFreeBlocks = 4088;
 	numFreeInode = 224;
-	
 
 	initPartition();
-	
+
 	while (1) {
 		printf("----------------File Maker----------------\n");
 		printf("1. Make file\n");
 		printf("2. Make Dump file\n");
 		printf("3. Exit\n");
 		printf("-------------------------------------------\n");
-		
+
 		scanf("%d", &menuSelect);
 
 		switch (menuSelect) {
@@ -48,10 +46,10 @@ int main(void) {
 			fclose(pMakeFile);
 			return 0;
 			break;
-		default :
+		default:
 			break;
 		}
-		
+
 	}
 }
 
@@ -77,8 +75,6 @@ void initPartition(void) {
 	freeInode[1] = 1;
 	numFreeInode--;
 	//inodeTable[2] Setting
-	freeInode[2] = 1;
-	numFreeInode--;
 	part.inodeTable[part.super.firstInode].mode = 0x20777;	//DIR_FILE + AC_ALL
 	part.inodeTable[part.super.firstInode].size = 64;
 	//firstBlock Setting
@@ -87,16 +83,18 @@ void initPartition(void) {
 
 	//dentry[0] Setting "."
 	memset(&dirEntry, 0, sizeof(dentry));
-	dirEntry.inode = 0;
+	dirEntry.inode = 1;
 	dirEntry.dirLength = 32;
 	dirEntry.nameLen = 2;
 	dirEntry.fileType = 1;
 	strcpy(dirEntry.name, ".");
 	memcpy(part.dataBlocks[0].d, &dirEntry, 32);		//Copy dentry[0] to dataBlock[0]
-	
+
 	//dentry[1] Setting ".."
 	memset(&dirEntry, 0, sizeof(dentry));
-	dirEntry.inode = 1;
+	freeInode[2] = 1;
+	numFreeInode--;
+	dirEntry.inode = 2;
 	dirEntry.dirLength = 32;
 	dirEntry.nameLen = 3;
 	dirEntry.fileType = 1;
@@ -134,9 +132,9 @@ void makeFile(void) {
 	fileContents[1023] = '\0';
 	__fpurge(stdin);
 
-	blockNum = part.inodeTable[part.super.firstInode].size / 1024;					//direntry block number
+	blockNum = part.inodeTable[part.super.firstInode].size / 1024;
 	if ((part.inodeTable[part.super.firstInode].size % 1024) == 0) {				//if root dirEntry need new block
-		part.inodeTable[part.super.firstInode].blocks[blockNum] = findFreeBlock();	//alloc new block(direntry)
+		part.inodeTable[part.super.firstInode].blocks[blockNum] = findFreeBlock();
 	}
 
 	//super block update
@@ -152,8 +150,15 @@ void makeFile(void) {
 	dirEntry.nameLen = strlen(fileName);
 	dirEntry.fileType = 1;
 	strcpy(dirEntry.name, fileName);
-	memcpy((part.dataBlocks[blockNum].d + part.inodeTable[part.super.firstInode].size - 32), &dirEntry, 32);
+	if ((part.inodeTable[part.super.firstInode].size % 1024) == 0) {
+		memcpy((part.dataBlocks[blockNum].d + part.inodeTable[part.super.firstInode].size), &dirEntry, 32);
 		//root dir entry			+		entry num * 32
+	}
+	else {
+		memcpy((part.dataBlocks[blockNum].d + part.inodeTable[part.super.firstInode].size - 32), &dirEntry, 32);
+		//root dir entry			+		entry num * 32
+	}
+
 
 	//file Inode update
 	part.inodeTable[newInode].mode = 0x10000 + 0x777;			//REG_FILE + AC_ALL
@@ -161,19 +166,19 @@ void makeFile(void) {
 	part.inodeTable[newInode].date = 0;
 	part.inodeTable[newInode].size = strlen(fileContents);
 	part.inodeTable[newInode].indirectBlock = -1;
-	
+
 	//Data Block update
 	newBlock = findFreeBlock();
 	freeBlocks[newBlock] = 1;
 	numFreeBlocks--;
 	part.inodeTable[newInode].blocks[0] = newBlock;
 	strcpy(part.dataBlocks[newBlock].d, fileContents);
-		//file inode.block[0].d     cpy	 fileContents
+	//file inode.block[0].d     cpy	 fileContents
 }
 
 void save2File(void) {
 	fseek(pMakeFile, 0, SEEK_SET);																//File Pointer Move to start point
-	part.super.numFreeInodes = numFreeInode;
+	part.super.numInodes = numFreeInode;
 	part.super.numFreeBlocks = numFreeBlocks;
 	fwrite(&part.super, sizeof(superBlock), 1, pMakeFile);										//Update superBlock (part<memory> -> img<disk>)
 	for (int i = 0; i < 224; i++) {																//Update inodeTable (part<momory> -> img<disk>)
@@ -195,7 +200,7 @@ void printFileInfo(void) {
 	if ((part.inodeTable[part.super.firstInode].size % BLOCK_SIZE) != 0) {
 		blockNum++;
 	}
-	
+
 	fprintf(pFileDump, "----------------------------------------------------File Info---------------------------------------------------\n");
 	for (int i = 0; i < blockNum; i++) {
 		blockLocation = BLOCK_SIZE * (part.super.firstDataBlock + part.inodeTable[part.super.firstInode].blocks[i]);			//Directory Entry = Firstblock(8) + rootdir inode -> block

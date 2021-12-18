@@ -3,11 +3,11 @@
   Block Size       - 1024 bytes
   Inode Size       - 32 bytes
   First Inode      - 2
-  num Inodes       - 220
+  num Inodes       - 219
   num Inode Blocks - 7
   num Free Inodes  - 224
   num Blocks       - 4088
-  num Free Blocks  - 4086
+  num Free Blocks  - 4085
   First Data Block - 8
   Volume Name      - TAKPAK_Partition
 -------------------------------------------------------------
@@ -31,7 +31,7 @@
   Mode           - 132983
   Locked         - 0
   Date           - 0
-  File Size      - 96 bytes
+  File Size      - 128 bytes
   Indirect Block - 0
   Blocks - 0 0 0 0 0 0 
 -------------------------------------------------------------
@@ -39,17 +39,17 @@
   Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 17 bytes
+  File Size      - 3 bytes
   Indirect Block - -1
   Blocks - 1 0 0 0 0 0 
 -------------------------------------------------------------
 ---------------------Inode[  4] Contents---------------------
-  Mode           - 0
+  Mode           - 67447
   Locked         - 0
   Date           - 0
-  File Size      - 0 bytes
-  Indirect Block - 0
-  Blocks - 0 0 0 0 0 0 
+  File Size      - 3 bytes
+  Indirect Block - -1
+  Blocks - 2 0 0 0 0 0 
 -------------------------------------------------------------
 ---------------------Inode[  5] Contents---------------------
   Mode           - 0
@@ -1804,14 +1804,16 @@
   Blocks - 0 0 0 0 0 0 
 -------------------------------------------------------------
 -------------------------------------------------Root Directory------------------------------------------------
-              .              ..       file_1234 
+              .              ..             123             234 
 ---------------------------------------------------------------------------------------------------------------
 ----------------------------------------------------File Info---------------------------------------------------
 File Name :               .
 File Contents : 
 File Name :              ..
 File Contents : 
-File Name :       file_1234
-File Contents : sfjslafjdsljfasdf
+File Name :             123
+File Contents : 123
+File Name :             234
+File Contents : 234
 
 --------------------------------------------------------------------------------------------------------------
