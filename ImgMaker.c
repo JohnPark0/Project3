@@ -4,12 +4,12 @@ void initPartition(void);
 int findFreeInode(void);
 void save2File(void);
 void makeFile(void);
-void printRootDir(void);
+void printFileInfo(void);
 
 FILE* pMakeFile;
 int freeInode[224];
 int numFreeInode;
-void printFileInfo(void);
+
 
 int main(void) {
 	int menuSelect;
@@ -73,7 +73,12 @@ void initPartition(void) {
 	freeInode[0] = 1;
 	numFreeInode--;
 	part.inodeTable[0].size = 4186112;
+	//inodeTable[1] Setting
+	freeInode[1] = 1;
+	numFreeInode--;
 	//inodeTable[2] Setting
+	freeInode[2] = 1;
+	numFreeInode--;
 	part.inodeTable[part.super.firstInode].mode = 0x20777;	//DIR_FILE + AC_ALL
 	part.inodeTable[part.super.firstInode].size = 64;
 	//firstBlock Setting
@@ -82,9 +87,7 @@ void initPartition(void) {
 
 	//dentry[0] Setting "."
 	memset(&dirEntry, 0, sizeof(dentry));
-	freeInode[1] = 1;
-	numFreeInode--;
-	dirEntry.inode = 1;
+	dirEntry.inode = 0;
 	dirEntry.dirLength = 32;
 	dirEntry.nameLen = 2;
 	dirEntry.fileType = 1;
@@ -93,9 +96,7 @@ void initPartition(void) {
 	
 	//dentry[1] Setting ".."
 	memset(&dirEntry, 0, sizeof(dentry));
-	freeInode[2] = 1;
-	numFreeInode--;
-	dirEntry.inode = 2;
+	dirEntry.inode = 1;
 	dirEntry.dirLength = 32;
 	dirEntry.nameLen = 3;
 	dirEntry.fileType = 1;
@@ -133,10 +134,9 @@ void makeFile(void) {
 	fileContents[1023] = '\0';
 	__fpurge(stdin);
 
-	//if File contents over 1024 bytes -> not use
-	blockNum = part.inodeTable[part.super.firstInode].size / 1024;
+	blockNum = part.inodeTable[part.super.firstInode].size / 1024;					//direntry block number
 	if ((part.inodeTable[part.super.firstInode].size % 1024) == 0) {				//if root dirEntry need new block
-		part.inodeTable[part.super.firstInode].blocks[blockNum] = findFreeBlock();
+		part.inodeTable[part.super.firstInode].blocks[blockNum] = findFreeBlock();	//alloc new block(direntry)
 	}
 
 	//super block update
@@ -152,16 +152,9 @@ void makeFile(void) {
 	dirEntry.nameLen = strlen(fileName);
 	dirEntry.fileType = 1;
 	strcpy(dirEntry.name, fileName);
-	if ((part.inodeTable[part.super.firstInode].size % 1024) == 0) {
-		memcpy((part.dataBlocks[blockNum].d + part.inodeTable[part.super.firstInode].size), &dirEntry, 32);
+	memcpy((part.dataBlocks[blockNum].d + part.inodeTable[part.super.firstInode].size - 32), &dirEntry, 32);
 		//root dir entry			+		entry num * 32
-	}
-	else {
-		memcpy((part.dataBlocks[blockNum].d + part.inodeTable[part.super.firstInode].size - 32), &dirEntry, 32);
-		//root dir entry			+		entry num * 32
-	}
-	
-	
+
 	//file Inode update
 	part.inodeTable[newInode].mode = 0x10000 + 0x777;			//REG_FILE + AC_ALL
 	part.inodeTable[newInode].locked = 0;
@@ -180,7 +173,7 @@ void makeFile(void) {
 
 void save2File(void) {
 	fseek(pMakeFile, 0, SEEK_SET);																//File Pointer Move to start point
-	part.super.numInodes = numFreeInode;
+	part.super.numFreeInodes = numFreeInode;
 	part.super.numFreeBlocks = numFreeBlocks;
 	fwrite(&part.super, sizeof(superBlock), 1, pMakeFile);										//Update superBlock (part<memory> -> img<disk>)
 	for (int i = 0; i < 224; i++) {																//Update inodeTable (part<momory> -> img<disk>)
