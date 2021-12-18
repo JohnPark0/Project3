@@ -13,8 +13,8 @@
 
 //RR Define
 #define MAX_PROCESS 10
-#define TIME_TICK 10000// 0.01 second(10ms).
-#define TIME_QUANTUM 5// 0.05 seconds(50ms).
+#define TIME_TICK 10000						// 0.01 second(10ms).
+#define TIME_QUANTUM 5						// 0.05 seconds(50ms).
 
 //File System Define
 #define SIMPLE_PARTITION	0x1111
@@ -71,11 +71,11 @@ typedef struct superBlock {
 
 //32 byte I-node structure
 typedef struct inode {
-	unsigned int mode; 		// reg. file, directory, dev., permissions
-	unsigned int locked; 	// opened for write
+	unsigned int mode; 					// reg. file, directory, dev., permissions
+	unsigned int locked; 				// opened for write
 	unsigned int date;
 	unsigned int size;
-	int indirectBlock; 	// N.B. -1 for NULL
+	int indirectBlock; 					// N.B. -1 for NULL
 	unsigned short blocks[0x6];
 } inode;
 
@@ -87,7 +87,7 @@ typedef struct blocks {
 typedef struct partition {
 	struct superBlock super;
 	struct inode inodeTable[224];
-	struct blocks dataBlocks[4088]; //4096-8
+	struct blocks dataBlocks[4088];		//4096-8
 } partition;
 
 //Directory entry structure
@@ -108,7 +108,7 @@ typedef struct dentry {
 
 typedef struct PCBfile {
 	char fileName[20];
-	int fileCond;					// 0->not open file, 1->open read, 2->open write
+	int fileCond;						// 0->not open file, 1->open read, 2->open write
 	int offSet;
 } PCBfile;
 
@@ -161,8 +161,8 @@ bool isEmptyList(PCBList* list);
 void cMsgSndIocpu(int procNum, int cpuBurstTime, int ioBurstTime);
 void pMsgRcvIocpu(int procNum, PCB* nodePtr);
 
-int CPID[MAX_PROCESS];// child process pid.
-int KEY[MAX_PROCESS];// key value for message queue.
+int CPID[MAX_PROCESS];					// child process pid.
+int KEY[MAX_PROCESS];					// key value for message queue.
 int CONST_TICK_COUNT;
 int TICK_COUNT;
 int RUN_TIME;
@@ -179,4 +179,3 @@ FILE* pFileDump;
 FILE* pBurst;
 partition part;
 dentry dirEntry;
-

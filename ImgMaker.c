@@ -53,6 +53,10 @@ int main(void) {
 	}
 }
 
+/*
+*	void initPartition(void)
+*	Function to initialize the superBlock of the partition memory and the root directory Inode.
+*/
 void initPartition(void) {
 	//superBlock Setting
 	part.super.partitionType = 0x1111;						//SIMPLE_PARTITON
@@ -88,7 +92,7 @@ void initPartition(void) {
 	dirEntry.nameLen = 2;
 	dirEntry.fileType = 1;
 	strcpy(dirEntry.name, ".");
-	memcpy(part.dataBlocks[0].d, &dirEntry, 32);		//Copy dentry[0] to dataBlock[0]
+	memcpy(part.dataBlocks[0].d, &dirEntry, 32);			//Copy dentry[0] to dataBlock[0]
 
 	//dentry[1] Setting ".."
 	memset(&dirEntry, 0, sizeof(dentry));
@@ -99,9 +103,13 @@ void initPartition(void) {
 	dirEntry.nameLen = 3;
 	dirEntry.fileType = 1;
 	strcpy(dirEntry.name, "..");
-	memcpy(part.dataBlocks[0].d + 32, &dirEntry, 32);	//Copy dentry[1] to dataBlock[0]
+	memcpy(part.dataBlocks[0].d + 32, &dirEntry, 32);		//Copy dentry[1] to dataBlock[0]
 }
 
+/*
+*	int findFreeInode(void)
+*	A function that searches for an empty inode and returns a number.
+*/
 int findFreeInode(void) {
 	int free;
 	for (int i = 0; i < 224; i++) {
@@ -112,6 +120,10 @@ int findFreeInode(void) {
 	}
 }
 
+/*
+*	void makeFile(void)
+*	A function that creates a file in the root directory.
+*/
 void makeFile(void) {
 	char fileName[16];
 	char fileContents[1024];
@@ -176,6 +188,10 @@ void makeFile(void) {
 	//file inode.block[0].d     cpy	 fileContents
 }
 
+/*
+*	void save2File(void)
+*	A function that writes data from the partition memory to the disk.img file.
+*/
 void save2File(void) {
 	fseek(pMakeFile, 0, SEEK_SET);																//File Pointer Move to start point
 	part.super.numInodes = numFreeInode;
@@ -189,6 +205,10 @@ void save2File(void) {
 	}
 }
 
+/*
+*	void printFileInfo(void)
+*	A function that prints the names and contents of files in the root directory.
+*/
 void printFileInfo(void) {
 	int blockNum = part.inodeTable[part.super.firstInode].size / BLOCK_SIZE;					//Block number = file size / block size
 	int blockLocation;
@@ -207,9 +227,9 @@ void printFileInfo(void) {
 		fseek(pFileSystem, blockLocation, SEEK_SET);
 		for (int t = 0; t < BLOCK_SIZE; t = t + 32) {
 			fread(&dirEntry.inode, sizeof(int), 1, pFileSystem);
-			fseek(pFileSystem, 12, SEEK_CUR);														//Move File pointer 12 bytes ->useless data
+			fseek(pFileSystem, 12, SEEK_CUR);																					//Move File pointer 12 bytes ->useless data
 			fread(&dirEntry.name, sizeof(char), 16, pFileSystem);
-			if (dirEntry.inode == 0) {																//End -> stop printing
+			if (dirEntry.inode == 0) {																							//End -> stop printing
 				break;
 			}
 			fprintf(pFileDump, "File Name : %15s\n", dirEntry.name);

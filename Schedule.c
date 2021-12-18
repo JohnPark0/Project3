@@ -1,5 +1,11 @@
 #include "fs.h"
 
+/*
+*	void signalTimeTick(int signo)
+*	This is a signal handler function that is executed every tick by the SIGALRM signal.
+*	If there is a waiting process in the waitQueue, the IO time is reduced by 1 tick and 
+*	the file access operation is performed.
+*/
 void signalTimeTick(int signo) {								//SIGALRM
 	char userBuffer[1024];
 	int openMode;
@@ -81,6 +87,11 @@ void signalTimeTick(int signo) {								//SIGALRM
 	return;
 }
 
+/*
+*	void signalRRcpuSchedOut(int signo)
+*	This is a signal handler function called by the SIGUSR1 signal.
+*	Checks whether the process has worked as much as quantum ticks.
+*/
 void signalRRcpuSchedOut(int signo) {							//SIGUSR1
 	TICK_COUNT++;
 
@@ -95,6 +106,11 @@ void signalRRcpuSchedOut(int signo) {							//SIGUSR1
 	return;
 }
 
+/*
+*	void signalIoSchedIn(int signo)
+*	This is a signal handler function called by the SIGUSR2 signal.
+*	When all CPU time is consumed, the process is moved to the waitQueue.
+*/
 void signalIoSchedIn(int signo) {								//SIGUSR2
 	pMsgRcvIocpu(cpuRunPCB->procNum, cpuRunPCB);
 
@@ -113,6 +129,10 @@ void signalIoSchedIn(int signo) {								//SIGUSR2
 	return;
 }
 
+/*
+*	void initPCBList(PCBList* list)
+*	A function that initializes a list.
+*/
 void initPCBList(PCBList* list) {
 	list->head = NULL;
 	list->tail = NULL;
@@ -120,6 +140,10 @@ void initPCBList(PCBList* list) {
 	return;
 }
 
+/*
+*	void pushPCB(PCBList* list, int procNum, int cpuTime, int ioTime, PCBfile file)
+*	A function that adds a node based on the parameters input to the list.
+*/
 void pushPCB(PCBList* list, int procNum, int cpuTime, int ioTime, PCBfile file) {
 	PCB* newPCB = (PCB*)malloc(sizeof(PCB));
 	if (newPCB == NULL) {
@@ -148,6 +172,10 @@ void pushPCB(PCBList* list, int procNum, int cpuTime, int ioTime, PCBfile file) 
 	return;
 }
 
+/*
+*	void popPCB(PCBList* list, PCB* runPCB)
+*	A function that returns a node in a list.
+*/
 void popPCB(PCBList* list, PCB* runPCB) {
 	PCB* oldPCB = list->head;
 
@@ -173,6 +201,10 @@ void popPCB(PCBList* list, PCB* runPCB) {
 	return;
 }
 
+/*
+*	bool isEmptyList(PCBList* list)
+*	A function that checks whether the list is empty and returns a bool type.
+*/
 bool isEmptyList(PCBList* list) {
 	if (list->head == NULL)
 		return true;
@@ -180,6 +212,10 @@ bool isEmptyList(PCBList* list) {
 		return false;
 }
 
+/*
+*	void deletePCB(PCBList* list)
+*	A function that removes all nodes in a list.
+*/
 void deletePCB(PCBList* list) {
 	while (isEmptyList(list) == false) {
 		PCB* delPCB;
@@ -189,6 +225,10 @@ void deletePCB(PCBList* list) {
 	}
 }
 
+/*
+*	void cMsgSndIocpu(int procNum, int cpuBurstTime, int ioBurstTime)
+*	A function that sends a message queue from a child process to a parent process.
+*/
 void cMsgSndIocpu(int procNum, int cpuBurstTime, int ioBurstTime) {
 	int key = 0x3216 * (procNum + 1);
 	int qid = msgget(key, IPC_CREAT | 0666);				// create message queue ID.
@@ -209,8 +249,12 @@ void cMsgSndIocpu(int procNum, int cpuBurstTime, int ioBurstTime) {
 	return;
 }
 
+/*
+*	void pMsgRcvIocpu(int procNum, PCB* PCBPtr)
+*	A function in which the parent process receives a message queue from the child process.
+*/
 void pMsgRcvIocpu(int procNum, PCB* PCBPtr) {
-	int key = 0x3216 * (procNum + 1);// create message queue key.
+	int key = 0x3216 * (procNum + 1);						// create message queue key.
 	int qid = msgget(key, IPC_CREAT | 0666);
 
 	struct msgBufIocpu msg;
